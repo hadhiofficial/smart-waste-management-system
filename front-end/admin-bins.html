@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bins Management - Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      padding: 2rem 1rem;
+      color: white;
+      position: fixed;
+      height: 100vh;
+      width: 260px;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .sidebar-logo {
+      font-size: 2rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .menu-item {
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .menu-item.active {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border-left: 3px solid white;
+      padding-left: calc(1rem - 3px);
+    }
+
+    .menu-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .main-content {
+      padding: 2rem;
+      margin-left: 260px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .header-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .search-box {
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      width: 300px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f8fafc;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-inactive {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .action-btn {
+      padding: 0.5rem 1rem;
+      margin: 0 0.25rem;
+      font-size: 0.85rem;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: #f1f5f9;
+      border-color: #10b981;
+    }
+
+    @media (max-width: 1200px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .main-content {
+        margin-left: 200px;
+      }
+
+      .admin-layout {
+        grid-template-columns: 200px 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        z-index: 1000;
+        transition: left 0.3s ease;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">🌿</div>
+        <div>
+          <div class="sidebar-title">Clean Bin</div>
+          <div class="sidebar-subtitle">Admin Panel</div>
+        </div>
+      </div>
+
+      <div class="sidebar-menu">
+        <a href="admin-dashboard.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="admin-bins.html" class="menu-item active">
+          <span class="menu-icon"><i class="fas fa-trash"></i></span>
+          <span>Bins Management</span>
+        </a>
+        <a href="admin-map.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-map-location-dot"></i></span>
+          <span>Live Map</span>
+        </a>
+        <a href="admin-complaints.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+          <span>Complaints</span>
+        </a>
+        <a href="admin-drivers.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-truck"></i></span>
+          <span>Drivers</span>
+        </a>
+        <a href="admin-users.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-users"></i></span>
+          <span>Users</span>
+        </a>
+        <a href="admin-reports.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-chart-bar"></i></span>
+          <span>Reports</span>
+        </a>
+        <a href="admin-settings.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-cog"></i></span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <div class="header-title">Bins Management</div>
+        <div class="header-actions">
+          <input type="text" class="search-box" placeholder="Search by bin ID or location...">
+          <button class="btn"><i class="fas fa-plus"></i> Add New Bin</button>
+        </div>
+      </div>
+
+      <!-- Active Bins -->
+      <div class="content-card">
+        <div class="card-title"><i class="fas fa-recycle"></i> All Waste Bins</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Bin ID</th>
+              <th>Location</th>
+              <th>Fill Level</th>
+              <th>Status</th>
+              <th>Last Collection</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>BIN-2847</strong></td>
+              <td>Downtown Market</td>
+              <td>85%</td>
+              <td><span class="status-badge status-warning">Full</span></td>
+              <td>2 hours ago</td>
+              <td>
+                <button class="action-btn">Edit</button>
+                <button class="action-btn">Empty</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>BIN-2845</strong></td>
+              <td>Park Avenue</td>
+              <td>65%</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>5 hours ago</td>
+              <td>
+                <button class="action-btn">Edit</button>
+                <button class="action-btn">Schedule</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>BIN-2843</strong></td>
+              <td>School Road</td>
+              <td>45%</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>8 hours ago</td>
+              <td>
+                <button class="action-btn">Edit</button>
+                <button class="action-btn">Monitor</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>BIN-2841</strong></td>
+              <td>Central Plaza</td>
+              <td>95%</td>
+              <td><span class="status-badge status-warning">Critical</span></td>
+              <td>12 hours ago</td>
+              <td>
+                <button class="action-btn">Edit</button>
+                <button class="action-btn">Emergency</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Statistics -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div class="content-card">
+          <div style="font-size: 2rem; font-weight: 700; color: #10b981; margin-bottom: 0.5rem;">847</div>
+          <div style="color: #64748b;">Total Bins</div>
+        </div>
+        <div class="content-card">
+          <div style="font-size: 2rem; font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">156</div>
+          <div style="color: #64748b;">Overflow (>80%)</div>
+        </div>
+        <div class="content-card">
+          <div style="font-size: 2rem; font-weight: 700; color: #06b6d4; margin-bottom: 0.5rem;">234</div>
+          <div style="color: #64748b;">Scheduled Today</div>
+        </div>
+        <div class="content-card">
+          <div style="font-size: 2rem; font-weight: 700; color: #dc2626; margin-bottom: 0.5rem;">12</div>
+          <div style="color: #64748b;">Maintenance Required</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

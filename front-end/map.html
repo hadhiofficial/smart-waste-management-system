@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/dashboard-enhanced.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #mapContainer {
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .map-controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .map-button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--neutral-white);
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--neutral-gray-700);
+      transition: all 0.2s;
+    }
+
+    .map-button:hover {
+      background: var(--gradient-primary);
+      color: var(--neutral-white);
+      transform: translateY(-2px);
+    }
+
+    .map-sidebar {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: var(--neutral-white);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .map-sidebar-header {
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--neutral-gray-900);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .legend-color {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <!-- Map Container -->
+  <div id="mapContainer"></div>
+
+  <!-- Map Controls -->
+  <div class="map-controls">
+    <button class="map-button" onclick="fitMapBounds()">📍 Fit Bounds</button>
+    <button class="map-button" onclick="initMap('mapContainer')">🔄 Reset Map</button>
+    <button class="map-button" onclick="window.history.back()">← Back</button>
+  </div>
+
+  <!-- Map Legend -->
+  <div class="map-sidebar">
+    <div class="map-sidebar-header">Map Legend</div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background: #ef4444;"></div>
+      <span>Full Bin (>80%)</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background: #f59e0b;"></div>
+      <span>Moderate (50-80%)</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background: #10b981;"></div>
+      <span>Empty (<50%)</span>
+    </div>
+    
+    <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--neutral-gray-200);">
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background: #3b82f6;"></div>
+      <span>Report - Low</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background: #f59e0b;"></div>
+      <span>Report - Medium</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background: #ef4444;"></div>
+      <span>Report - High</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background: #8b5cf6;"></div>
+      <span>Report - Critical</span>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/map.js"></script>
+
+  <script>
+    // Initialize map when DOM is ready
+    onDOMReady(function() {
+      initMap('mapContainer');
+      console.log('Map Page Loaded ✓');
+    });
+  </script>
+</body>
+</html>

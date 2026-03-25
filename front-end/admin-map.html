@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Map - Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      padding: 2rem 1rem;
+      color: white;
+      position: fixed;
+      height: 100vh;
+      width: 260px;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .sidebar-logo {
+      font-size: 2rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .menu-item {
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .menu-item.active {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border-left: 3px solid white;
+      padding-left: calc(1rem - 3px);
+    }
+
+    .menu-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .main-content {
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 2rem;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .map-container {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .legend {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      font-size: 0.9rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .legend-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+
+    .stats-bar {
+      background: white;
+      padding: 2rem;
+      margin: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #10b981;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        z-index: 1000;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .legend {
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 0.8rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">🌿</div>
+        <div>
+          <div class="sidebar-title">Clean Bin</div>
+          <div class="sidebar-subtitle">Admin Panel</div>
+        </div>
+      </div>
+
+      <div class="sidebar-menu">
+        <a href="admin-dashboard.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="admin-bins.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-trash"></i></span>
+          <span>Bins Management</span>
+        </a>
+        <a href="admin-map.html" class="menu-item active">
+          <span class="menu-icon"><i class="fas fa-map-location-dot"></i></span>
+          <span>Live Map</span>
+        </a>
+        <a href="admin-complaints.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+          <span>Complaints</span>
+        </a>
+        <a href="admin-drivers.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-truck"></i></span>
+          <span>Drivers</span>
+        </a>
+        <a href="admin-users.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-users"></i></span>
+          <span>Users</span>
+        </a>
+        <a href="admin-reports.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-chart-bar"></i></span>
+          <span>Reports</span>
+        </a>
+        <a href="admin-settings.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-cog"></i></span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <div class="header-title">Live Map</div>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value">847</div>
+          <div class="stat-label">Total Bins</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">28</div>
+          <div class="stat-label">Active Drivers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">156</div>
+          <div class="stat-label">Overflow Alerts</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">2.3k kg</div>
+          <div class="stat-label">Collected Today</div>
+        </div>
+      </div>
+
+      <div class="map-container">
+        <div id="map"></div>
+        <div class="legend">
+          <div style="font-weight: 700; margin-bottom: 0.75rem;">Map Legend</div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #10b981;"></div>
+            <span>Empty (<50%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #f59e0b;"></div>
+            <span>Medium (50-75%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #dc2626;"></div>
+            <span>Full (>75%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #06b6d4;"></div>
+            <span>Active Driver</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+    let map;
+
+    function initMap() {
+      map = L.map('map').setView([-37.8136, 144.9631], 14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19
+      }).addTo(map);
+
+      // Add bin markers
+      const bins = [
+        { lat: -37.8136, lng: 144.9631, id: 'BIN-2847', fill: 85 },
+        { lat: -37.8146, lng: 144.9641, id: 'BIN-2845', fill: 65 },
+        { lat: -37.8126, lng: 144.9621, id: 'BIN-2843', fill: 45 },
+        { lat: -37.8156, lng: 144.9661, id: 'BIN-2853', fill: 90 },
+        { lat: -37.8116, lng: 144.9611, id: 'BIN-2841', fill: 25 }
+      ];
+
+      bins.forEach(bin => {
+        const color = bin.fill > 75 ? '#dc2626' : bin.fill > 50 ? '#f59e0b' : '#10b981';
+        const marker = L.marker([bin.lat, bin.lng], {
+          icon: L.divIcon({
+            html: `<div style="background: ${color}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+              <i class="fas fa-trash" style="font-size: 0.9rem;"></i>
+            </div>`,
+            iconSize: [32, 32],
+            className: ''
+          })
+        }).addTo(map);
+
+        marker.bindPopup(`<strong>${bin.id}</strong><br>Fill: ${bin.fill}%`);
+      });
+
+      // Add driver markers
+      const drivers = [
+        { lat: -37.8200, lng: 144.9700, name: 'Ahmed R.' },
+        { lat: -37.8050, lng: 144.9500, name: 'Maria G.' }
+      ];
+
+      drivers.forEach(driver => {
+        L.marker([driver.lat, driver.lng], {
+          icon: L.divIcon({
+            html: `<div style="background: #06b6d4; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+              <i class="fas fa-truck" style="font-size: 0.9rem;"></i>
+            </div>`,
+            iconSize: [32, 32],
+            className: ''
+          })
+        }).addTo(map).bindPopup(`<strong>Driver: ${driver.name}</strong><br>Active Route`);
+      });
+    }
+
+    window.addEventListener('load', initMap);
+  </script>
+</body>
+</html>

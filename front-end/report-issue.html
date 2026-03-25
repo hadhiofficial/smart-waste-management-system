@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Issue - CLEAN BIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/modern.css">
+  <style>
+    body {
+      display: flex;
+      background: linear-gradient(135deg, #f9fafb 0%, #ecfdf5 100%);
+      min-height: 100vh;
+    }
+    .sidebar { width: 260px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-right: 1px solid rgba(0, 0, 0, 0.05); padding: 1.5rem 0; height: 100vh; position: fixed; left: 0; overflow-y: auto; box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08); }
+    .sidebar-brand { padding: 0 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; color: var(--primary-green); text-decoration: none; }
+    .sidebar-brand i { font-size: 1.5rem; }
+    .sidebar-brand span { font-weight: 700; font-size: 1.1rem; }
+    .sidebar-menu { list-style: none; padding: 0; }
+    .sidebar-item { margin-bottom: 0.5rem; }
+    .sidebar-link { display: flex; align-items: center; gap: 1rem; padding: 0.875rem 1.5rem; color: var(--neutral-700); text-decoration: none; transition: all var(--transition-base); border-left: 3px solid transparent; }
+    .sidebar-link:hover, .sidebar-link.active { background: rgba(16, 185, 129, 0.08); color: var(--primary-green); border-left-color: var(--primary-green); }
+    .sidebar-link i { width: 20px; text-align: center; }
+    .main-content { margin-left: 260px; flex: 1; padding: 2rem; min-height: 100vh; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.3); }
+    .header-title h1 { margin: 0; font-size: 1.75rem; color: var(--primary-dark); }
+    .header-title p { margin: 0; color: var(--neutral-600); font-size: 0.9rem; }
+    .form-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 1rem; padding: 2rem; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05); max-width: 600px; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--primary-dark); }
+    .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--neutral-300); border-radius: 0.5rem; font-family: inherit; font-size: 1rem; }
+    .form-control:focus { outline: none; border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+    textarea.form-control { resize: vertical; min-height: 120px; }
+    .btn-submit { background: var(--primary-green); color: white; padding: 0.75rem 2rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all var(--transition-base); }
+    .btn-submit:hover { background: #059669; transform: translateY(-2px); }
+    @media (max-width: 1024px) {
+      .sidebar { width: 70px; }
+      .main-content { margin-left: 70px; }
+      .sidebar-link { padding: 0.875rem; justify-content: center; }
+      .sidebar-link span { display: none; }
+      .sidebar-brand span { display: none; }
+      .form-card { max-width: 100%; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <a href="dashboard-user.html" class="sidebar-brand">
+      <i class="fas fa-leaf"></i>
+      <span>CLEAN BIN</span>
+    </a>
+    <ul class="sidebar-menu">
+      <li class="sidebar-item"><a href="dashboard-user.html" class="sidebar-link"><i class="fas fa-chart-area"></i> <span>Dashboard</span></a></li>
+      <li class="sidebar-item"><a href="nearby-bins.html" class="sidebar-link"><i class="fas fa-map"></i> <span>Nearby Bins</span></a></li>
+      <li class="sidebar-item"><a href="report-issue.html" class="sidebar-link active"><i class="fas fa-exclamation-circle"></i> <span>Report Issue</span></a></li>
+      <li class="sidebar-item"><a href="my-reports.html" class="sidebar-link"><i class="fas fa-list"></i> <span>My Reports</span></a></li>
+      <li class="sidebar-item"><a href="schedule.html" class="sidebar-link"><i class="fas fa-calendar"></i> <span>Schedule</span></a></li>
+      <li class="sidebar-item"><a href="green-points.html" class="sidebar-link"><i class="fas fa-leaf"></i> <span>Green Points</span></a></li>
+      <li class="sidebar-item"><a href="settings.html" class="sidebar-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+      <li class="sidebar-item"><a href="login.html" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <div class="header">
+      <div class="header-title">
+        <h1>⚠️ Report an Issue</h1>
+        <p>Help us improve waste management by reporting issues</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Issue Type</label>
+          <select class="form-control" required>
+            <option value="">-- Select Issue Type --</option>
+            <option value="overflow">Bin Overflow</option>
+            <option value="damaged">Damaged Bin</option>
+            <option value="misplaced">Misplaced Waste</option>
+            <option value="uncollected">Uncollected Waste</option>
+            <option value="foul-smell">Foul Smell</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Bin Location</label>
+          <input type="text" class="form-control" placeholder="Enter the location of the bin" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Bin ID (Optional)</label>
+          <input type="text" class="form-control" placeholder="E.g., Bin #451">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" placeholder="Describe the issue in detail..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">📸 Upload Photo (Recommended)</label>
+          <div id="imageUploadArea" style="border: 2px dashed var(--primary-green, #10b981); border-radius: 0.75rem; padding: 2rem; text-align: center; cursor: pointer; background: rgba(16, 185, 129, 0.08); transition: all 0.3s ease; margin-bottom: 1rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📷</div>
+            <p style="margin: 0.5rem 0; font-weight: 500;">Drag & drop image here or click to select</p>
+            <p style="margin: 0.5rem 0; font-size: 0.85rem; color: #666;">Supported: JPG, PNG, GIF (max 5MB)</p>
+            <input type="file" id="imageInput" class="form-control" accept="image/*" style="display: none;">
+          </div>
+          <div id="imagePreview"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <select class="form-control" required>
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-paper-plane"></i> Submit Report
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    let selectedImage = null;
+
+    // Image upload area setup
+    const uploadArea = document.getElementById('imageUploadArea');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+
+    uploadArea.addEventListener('click', () => imageInput.click());
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.style.background = 'rgba(16, 185, 129, 0.15)';
+      uploadArea.style.borderColor = '#10b981';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.style.background = 'rgba(16, 185, 129, 0.08)';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleImageSelect(files[0]);
+      }
+    });
+
+    // File input change
+    imageInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleImageSelect(e.target.files[0]);
+      }
+    });
+
+    function handleImageSelect(file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+
+      selectedImage = file;
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        imagePreview.innerHTML = `
+          <div style="margin-top: 1rem; position: relative;">
+            <img src="${e.target.result}" style="width: 100%; max-width: 300px; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <button type="button" onclick="removeImage()" style="margin-top: 0.75rem; background: #ef4444; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">
+              ✕ Remove Image
+            </button>
+          </div>
+        `;
+        uploadArea.style.display = 'none';
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+      selectedImage = null;
+      imagePreview.innerHTML = '';
+      imageInput.value = '';
+      uploadArea.style.display = 'block';
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const issueType = e.target.querySelector('select').value;
+      const location = e.target.querySelectorAll('input')[0].value;
+      const description = e.target.querySelector('textarea').value;
+
+      if (!issueType || !location || !description) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      let message = '✅ Issue reported successfully!';
+      if (selectedImage) {
+        message += '\n📸 Photo attached: ' + selectedImage.name;
+      }
+      message += '\n\nOur team will investigate within 24 hours.';
+
+      alert(message);
+      e.target.reset();
+      removeImage();
+    }
+  </script>
+</body>
+</html>

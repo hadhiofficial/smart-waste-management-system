@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Your Role - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      padding: 2rem;
+    }
+
+    .logo-section {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #10b981;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #64748b;
+    }
+
+    .roles-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .role-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .role-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+    }
+
+    .role-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+    }
+
+    .role-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .role-description {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .role-features {
+      text-align: left;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-icon {
+      color: #10b981;
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .back-link {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .back-link a {
+      color: #10b981;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .logo-section {
+        margin-bottom: 2rem;
+      }
+
+      .title {
+        font-size: 1.5rem;
+      }
+
+      .roles-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .role-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .role-icon {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-section">
+    <div class="logo">🌿</div>
+    <div class="title">Clean Bin</div>
+    <div class="subtitle">Smart Waste Management System</div>
+  </div>
+
+  <div class="roles-container">
+    <!-- Citizen Login -->
+    <div class="role-card">
+      <div class="role-icon">👤</div>
+      <div class="role-name">Citizen</div>
+      <div class="role-description">Report waste issues and earn eco-rewards</div>
+      <div class="role-features">
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>Report Waste Issues</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>Earn EcoPoints</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>View Nearby Bins</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>Track Progress</span>
+        </div>
+      </div>
+      <a href="citizen-login.html" class="btn btn-primary">Login as Citizen</a>
+    </div>
+
+    <!-- Driver Login -->
+    <div class="role-card">
+      <div class="role-icon">🚚</div>
+      <div class="role-name">Driver</div>
+      <div class="role-description">Manage waste collection routes efficiently</div>
+      <div class="role-features">
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>View Active Tasks</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>Real-Time Map</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>Optimize Routes</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>Track Collections</span>
+        </div>
+      </div>
+      <a href="driver-login.html" class="btn btn-primary">Login as Driver</a>
+    </div>
+
+    <!-- Admin Login -->
+    <div class="role-card">
+      <div class="role-icon">👨‍💼</div>
+      <div class="role-name">Admin</div>
+      <div class="role-description">Monitor and manage system operations</div>
+      <div class="role-features">
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>System Analytics</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>KPI Dashboard</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>Manage Resources</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><i class="fas fa-check"></i></span>
+          <span>View Reports</span>
+        </div>
+      </div>
+      <a href="admin-login.html" class="btn btn-primary">Login as Admin</a>
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+  </div>
+</body>
+</html>

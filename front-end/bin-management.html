@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bin Management - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/dashboard-enhanced.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="navbar-logo" style="font-size: 1.5rem;">♻️</div>
+      <div class="sidebar-title">Management</div>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li class="sidebar-item">
+        <a href="dashboard-admin.html" class="sidebar-link">
+          <span class="sidebar-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#" class="sidebar-link active">
+          <span class="sidebar-icon">🗑️</span>
+          <span>Bin Management</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#" class="sidebar-link">
+          <span class="sidebar-icon">⚙️</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper" style="margin-left: 260px;">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="sidebar-toggle">☰</button>
+        <h1 class="dashboard-title">Waste Bin Management</h1>
+      </div>
+
+      <div class="header-right">
+        <button class="btn btn-primary btn-sm" onclick="openBinModal()">+ Add New Bin</button>
+      </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+      <!-- Filters -->
+      <div class="card" style="margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Search Bins</label>
+            <input type="text" id="searchBins" class="form-control" placeholder="Search by location or ID...">
+          </div>
+
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Filter by Status</label>
+            <select class="form-select" id="filterStatus">
+              <option value="">All Status</option>
+              <option value="full">Full</option>
+              <option value="moderate">Moderate</option>
+              <option value="empty">Empty</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Filter by Area</label>
+            <select class="form-select" id="filterArea">
+              <option value="">All Areas</option>
+              <option value="Downtown">Downtown</option>
+              <option value="North Zone">North Zone</option>
+              <option value="East Zone">East Zone</option>
+              <option value="Central Zone">Central Zone</option>
+              <option value="West Zone">West Zone</option>
+              <option value="South Zone">South Zone</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Filter by Type</label>
+            <select class="form-select" id="filterType">
+              <option value="">All Types</option>
+              <option value="mixed">Mixed</option>
+              <option value="organic">Organic</option>
+              <option value="medical">Medical</option>
+              <option value="commercial">Commercial</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bins Table -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">All Waste Bins</h3>
+          <span class="badge badge-primary" id="binCount">145 Bins</span>
+        </div>
+
+        <div style="overflow-x: auto; margin-top: 1rem;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Bin ID</th>
+                <th>Location</th>
+                <th>Area</th>
+                <th>Capacity Level</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th>Last Collection</th>
+                <th>Condition</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="binsTableBody">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bulk Actions -->
+      <div class="card" style="margin-top: 2rem;">
+        <h3 class="card-title">Bulk Actions</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <button class="btn btn-outline" 
+            onclick="scheduleBulkCollection()">📅 Schedule Collection</button>
+          <button class="btn btn-outline" 
+            onclick="exportBinsData()">📥 Export Data</button>
+          <button class="btn btn-outline" 
+            onclick="generateReport()">📊 Generate Report</button>
+          <button class="btn btn-outline" 
+            onclick="syncBinData()">🔄 Sync All Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bin Modal -->
+  <div id="binModal" class="modal">
+    <div class="modal-dialog" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Bin</h3>
+        <button class="modal-close" onclick="Modal.close('binModal')">&times;</button>
+      </div>
+      <div class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+
+  <script>
+    // Check authentication and authorization
+    Auth.requireAuth();
+    Auth.requireRole('admin');
+
+    // Advanced filtering
+    function applyFilters() {
+      const searchTerm = document.getElementById('searchBins').value.toLowerCase();
+      const statusFilter = document.getElementById('filterStatus').value;
+      const areaFilter = document.getElementById('filterArea').value;
+      const typeFilter = document.getElementById('filterType').value;
+
+      const rows = document.querySelectorAll('#binsTableBody tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const cells = row.querySelectorAll('td');
+
+        const matchesSearch = text.includes(searchTerm);
+        const matchesStatus = !statusFilter || cells[4].textContent.toLowerCase().includes(statusFilter);
+        const matchesArea = !areaFilter || cells[2].textContent.includes(areaFilter);
+        const matchesType = !typeFilter || cells[5].textContent.includes(typeFilter);
+
+        if (matchesSearch && matchesStatus && matchesArea && matchesType) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('binCount').textContent = visibleCount + ' Bins';
+    }
+
+    function scheduleBulkCollection() {
+      UI.toast('Collection scheduled for all full bins.', 'success');
+    }
+
+    function exportBinsData() {
+      UI.toast('Exporting bin data as CSV...', 'info');
+      // Mock export
+      console.log('Exporting:', AppData.wasteBins);
+    }
+
+    function generateReport() {
+      UI.toast('Report generation started. Check your email.', 'success');
+    }
+
+    function syncBinData() {
+      UI.toast('Syncing all bin data with server...', 'info');
+    }
+
+    // Initialize on page load
+    onDOMReady(function() {
+      populateBinsTable();
+      filterTable('searchBins', 'binsTableBody');
+
+      // Setup additional filters
+      document.getElementById('filterStatus').addEventListener('change', applyFilters);
+      document.getElementById('filterArea').addEventListener('change', applyFilters);
+      document.getElementById('filterType').addEventListener('change', applyFilters);
+      document.getElementById('searchBins').addEventListener('keyup', applyFilters);
+
+      console.log('Bin Management Page Loaded ✓');
+    });
+  </script>
+</body>
+</html>

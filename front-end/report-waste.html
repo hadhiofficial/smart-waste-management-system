@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Waste - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .header {
+      background: white;
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-back {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #10b981;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    /* Progress indicator */
+    .progress-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      justify-content: space-between;
+    }
+
+    .progress-step {
+      flex: 1;
+      height: 4px;
+      background: #e2e8f0;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-step.active {
+      background: #10b981;
+    }
+
+    .progress-step.complete {
+      background: #10b981;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .tab-button {
+      padding: 1rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      color: #94a3b8;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      margin-bottom: -1px;
+    }
+
+    .tab-button.active {
+      color: #10b981;
+      border-bottom-color: #10b981;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Map Container */
+    .map-container {
+      width: 100%;
+      height: 350px;
+      background: #e2e8f0;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+    }
+
+    .map-controls {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+
+    .map-btn {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #10b981;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+    }
+
+    .map-btn:hover {
+      background: #10b981;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .map-marker {
+      color: #dc2626;
+      font-size: 1.5rem;
+      cursor: grab;
+    }
+
+    .map-marker:active {
+      cursor: grabbing;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    textarea.form-input {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* Image upload */
+    .upload-area {
+      border: 2px dashed #e2e8f0;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .upload-area.dragover {
+      border-color: #10b981;
+      background: #ecfdf5;
+    }
+
+    .upload-icon {
+      font-size: 2.5rem;
+      color: #10b981;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #0f172a;
+    }
+
+    .upload-desc {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .upload-hint {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    /* Image preview */
+    .image-preview {
+      position: relative;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .image-preview.show {
+      display: block;
+    }
+
+    .image-preview img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+    }
+
+    .image-remove {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .image-remove:hover {
+      background: #b91c1c;
+    }
+
+    /* Status message */
+    .status-message {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .status-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .status-analyzing {
+      background: #dbeafe;
+      color: #0c4a6e;
+      border-left: 4px solid #0284c7;
+    }
+
+    .status-verified {
+      background: #d1fae5;
+      color: #065f46;
+      border-left: 4px solid #10b981;
+    }
+
+    .status-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid #dc2626;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.95rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #10b981;
+      border: 2px solid #10b981;
+    }
+
+    .btn-secondary:hover {
+      background: #ecfdf5;
+    }
+
+    .btn-disabled {
+      background: #cbd5e1;
+      color: #94a3b8;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Success modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .success-icon {
+      font-size: 3rem;
+      color: #10b981;
+      margin-bottom: 1rem;
+      animation: bounce 0.6s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .success-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .success-desc {
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    .success-id {
+      background: #f1f5f9;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 500;
+      color: #10b981;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    /* Alert */
+    .alert {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid #dc2626;
+    }
+
+    .alert-warning {
+      background: #fef3c7;
+      color: #b45309;
+      border-left: 4px solid #f59e0b;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .modal-content {
+        margin: 1rem;
+      }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <button class="header-back" onclick="history.back()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <div class="header-title">Report Waste Issue</div>
+  </div>
+
+  <div class="container">
+    <!-- Progress -->
+    <div class="progress-bar">
+      <div class="progress-step active complete"></div>
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="select-location">
+        <i class="fas fa-map-marker"></i> Select Location
+      </button>
+      <button class="tab-button" data-tab="report-details">
+        <i class="fas fa-info-circle"></i> Report Details
+      </button>
+      <button class="tab-button" data-tab="evidence">
+        <i class="fas fa-camera"></i> Evidence
+      </button>
+    </div>
+
+    <!-- Tab: Select Location -->
+    <div class="tab-content active" id="select-location">
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-map-marked-alt"></i> Select waste location on map (or drag to set)
+        </label>
+      </div>
+
+      <div class="map-container">
+        <div id="map"></div>
+        <div class="map-controls">
+          <button class="map-btn" title="Zoom In" onclick="zoomMap(1)">
+            <i class="fas fa-plus"></i>
+          </button>
+          <button class="map-btn" title="Zoom Out" onclick="zoomMap(-1)">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button class="map-btn" title="Current Location" onclick="centerMap()">
+            <i class="fas fa-location-crosshairs"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="form-group">
+          <label class="form-label">Bin ID (if known)</label>
+          <input type="text" class="form-input" placeholder="e.g., BIN-2847" id="binId">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Coordinates</label>
+          <input type="text" class="form-input" placeholder="-37.8136, 144.9631" id="coordinates" readonly>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="nextTab('report-details')">
+        <i class="fas fa-arrow-right"></i> Next: Report Details
+      </button>
+    </div>
+
+    <!-- Tab: Report Details -->
+    <div class="tab-content" id="report-details">
+      <div class="form-group">
+        <label class="form-label">Issue Type *</label>
+        <select class="form-input" id="issueType" required>
+          <option>-- Select Issue Type --</option>
+          <option>Bin Overflow</option>
+          <option>Damaged Bin</option>
+          <option>Foul Smell</option>
+          <option>Littering Around Bin</option>
+          <option>Overflowing Waste</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Priority Level</label>
+        <div style="display: flex; gap: 1rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="radio" name="priority" value="low" checked> Low
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="radio" name="priority" value="medium"> Medium
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="radio" name="priority" value="high"> High ⚠️
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description *</label>
+        <textarea class="form-input" placeholder="Describe the issue in detail..." id="description" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Reported by (optional)</label>
+        <input type="text" class="form-input" placeholder="Your name" id="reportedBy">
+      </div>
+
+      <button class="btn btn-secondary" onclick="prevTab('select-location)">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <button class="btn btn-primary" onclick="nextTab('evidence')" style="margin-top: 1rem;">
+        <i class="fas fa-arrow-right"></i> Next: Add Evidence
+      </button>
+    </div>
+
+    <!-- Tab: Evidence -->
+    <div class="tab-content" id="evidence">
+      <div class="form-group">
+        <label class="form-label">Attach Photo (max 5MB)</label>
+        <div class="upload-area" id="uploadArea" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+          <div class="upload-title">Drag & Drop or Click to Upload</div>
+          <div class="upload-desc">JPG, PNG, or GIF • Up to 5MB</div>
+          <div class="upload-hint">Try uploading evidence photo</div>
+        </div>
+        <input type="file" id="fileInput" class="file-input" accept="image/jpeg,image/png,image/gif" onchange="handleFileSelect(event)">
+      </div>
+
+      <div class="image-preview" id="imagePreview">
+        <img id="previewImg" alt="Preview">
+        <button class="image-remove" onclick="removeImage()">
+          <i class="fas fa-trash"></i> Remove Image
+        </button>
+      </div>
+
+      <div id="statusMessage" style="display: none;"></div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fas fa-robot"></i> AI Verification
+        </label>
+        <div class="status-message status-analyzing" id="verificationStatus" style="display: none;">
+          <span class="status-icon"><i class="fas fa-spinner"></i></span>
+          <div>
+            <strong>Analyzing image...</strong>
+            <div style="font-size: 0.85rem; margin-top: 0.25rem;">Our AI is verifying waste type and severity</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn btn-secondary" onclick="prevTab('report-details')">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitReport()">
+          <i class="fas fa-check-circle"></i> Submit Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal" id="successModal">
+    <div class="modal-content">
+      <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="success-title">Report Submitted!</div>
+      <div class="success-desc">Thank you for helping keep our city clean.</div>
+      <div class="success-id">Report ID: <span id="reportId">REP-82847</span></div>
+      <button class="btn btn-primary" style="margin: 0;" onclick="location.href='dashboard-user.html'">
+        Back to Dashboard
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+    let map;
+    let marker;
+    let selectedImage = null;
+
+    // Initialize map
+    function initMap() {
+      map = L.map('map').setView([-37.8136, 144.9631], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19
+      }).addTo(map);
+
+      map.on('click', addMarker);
+    }
+
+    function addMarker(e) {
+      const lat = e.latlng.lat.toFixed(4);
+      const lng = e.latlng.lng.toFixed(4);
+      
+      if (marker) {
+        map.removeLayer(marker);
+      }
+      
+      marker = L.marker([lat, lng]).addTo(map);
+      document.getElementById('coordinates').value = `${lat}, ${lng}`;
+    }
+
+    function zoomMap(level) {
+      map.setZoom(map.getZoom() + level);
+    }
+
+    function centerMap() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          map.setView([latitude, longitude], 15);
+          addMarker({ latlng: L.latLng(latitude, longitude) });
+        });
+      }
+    }
+
+    // Tab navigation
+    function nextTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function prevTab(tabId) {
+      nextTab(tabId);
+    }
+
+    // Image upload
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('uploadArea').classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+      document.getElementById('uploadArea').classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('uploadArea').classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length) handleFileSelect({ target: { files } });
+    }
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File too large. Max 5MB.');
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file.');
+        return;
+      }
+
+      selectedImage = file;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        document.getElementById('previewImg').src = event.target.result;
+        document.getElementById('imagePreview').classList.add('show');
+        
+        // Show AI verification
+        document.getElementById('verificationStatus').style.display = 'flex';
+        
+        setTimeout(() => {
+          document.getElementById('verificationStatus').innerHTML = `
+            <span class="status-icon"><i class="fas fa-check-circle"></i></span>
+            <div>
+              <strong>Verification Complete</strong>
+              <div style="font-size: 0.85rem; margin-top: 0.25rem;">Waste type identified: <strong>Organic Waste</strong> | Severity: <strong>High</strong></div>
+            </div>
+          `;
+          document.getElementById('verificationStatus').classList.remove('status-analyzing');
+          document.getElementById('verificationStatus').classList.add('status-verified');
+        }, 2000);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+      selectedImage = null;
+      document.getElementById('fileInput').value = '';
+      document.getElementById('imagePreview').classList.remove('show');
+      document.getElementById('verificationStatus').style.display = 'none';
+    }
+
+    // Submit
+    async function submitReport() {
+      const binId = document.getElementById('binId').value || 'AUTO';
+      const coordinates = document.getElementById('coordinates').value;
+      const issueType = document.getElementById('issueType').value;
+      const description = document.getElementById('description').value;
+
+      if (!coordinates || issueType === '-- Select Issue Type --' || !description) {
+        alert('Please fill all required fields');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-check-circle"></i> Submit Report';
+
+      // Show success
+      const reportId = 'REP-' + Math.floor(Math.random() * 100000);
+      document.getElementById('reportId').textContent = reportId;
+      document.getElementById('successModal').classList.add('show');
+
+      // Save to localStorage
+      const report = {
+        id: reportId,
+        binId,
+        coordinates,
+        issueType,
+        description,
+        date: new Date().toLocaleString()
+      };
+      const reports = JSON.parse(localStorage.getItem('myReports') || '[]');
+      reports.push(report);
+      localStorage.setItem('myReports', JSON.stringify(reports));
+    }
+
+    // Tab button listeners
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabId = btn.dataset.tab;
+        nextTab(tabId);
+      });
+    });
+
+    // Initialize
+    window.addEventListener('load', initMap);
+  </script>
+</body>
+</html>

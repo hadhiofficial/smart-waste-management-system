@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - CLEAN BIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/modern.css">
+  <style>
+    body {
+      display: flex;
+      background: linear-gradient(135deg, #f9fafb 0%, #ecfdf5 100%);
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 1.5rem 0;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      overflow-y: auto;
+      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar-brand {
+      padding: 0 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--primary-green);
+      text-decoration: none;
+    }
+
+    .sidebar-brand i {
+      font-size: 1.5rem;
+    }
+
+    .sidebar-brand span {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.875rem 1.5rem;
+      color: var(--neutral-700);
+      text-decoration: none;
+      transition: all var(--transition-base);
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-link.active {
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--primary-green);
+      border-left-color: var(--primary-green);
+    }
+
+    .sidebar-link i {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      flex: 1;
+      padding: 2rem;
+      min-height: 100vh;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(16, 185, 129, 0.03) 100%);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    }
+
+    .header-title h1 {
+      margin: 0;
+      font-size: 1.75rem;
+    }
+
+    .header-title p {
+      margin: 0;
+      color: var(--neutral-600);
+      font-size: 0.9rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--primary-light);
+      border-radius: 0.75rem;
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+      transition: all var(--transition-base);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--gradient-primary);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--neutral-600);
+      margin-top: 0.25rem;
+    }
+
+    /* Main Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Activity List */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--neutral-200);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-green);
+      flex-shrink: 0;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      color: var(--neutral-900);
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+      font-size: 0.85rem;
+      color: var(--neutral-600);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.5rem;
+      background: rgba(16, 185, 129, 0.05);
+      border: 2px solid var(--neutral-200);
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      text-decoration: none;
+      color: var(--neutral-900);
+    }
+
+    .action-btn:hover {
+      border-color: var(--primary-green);
+      background: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    .action-icon {
+      width: 45px;
+      height: 45px;
+      background: var(--gradient-primary);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .action-label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 70px;
+      }
+
+      .sidebar-link {
+        padding: 0.875rem;
+        justify-content: center;
+      }
+
+      .sidebar-link span {
+        display: none;
+      }
+
+      .sidebar-brand span {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 70px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="#" class="sidebar-brand">
+      <i class="fas fa-leaf"></i>
+      <span>CLEAN BIN</span>
+    </a>
+
+    <ul class="sidebar-menu">
+      <li class="sidebar-item">
+        <a href="dashboard-user.html" class="sidebar-link active">
+          <i class="fas fa-chart-area"></i> <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="nearby-bins.html" class="sidebar-link">
+          <i class="fas fa-map"></i> <span>Nearby Bins</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="report-issue.html" class="sidebar-link">
+          <i class="fas fa-exclamation-circle"></i> <span>Report Issue</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="my-reports.html" class="sidebar-link">
+          <i class="fas fa-list"></i> <span>My Reports</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="schedule.html" class="sidebar-link">
+          <i class="fas fa-calendar"></i> <span>Schedule</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="green-points.html" class="sidebar-link">
+          <i class="fas fa-leaf"></i> <span>Green Points</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="settings.html" class="sidebar-link">
+          <i class="fas fa-cog"></i> <span>Settings</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="login.html" class="sidebar-link">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-title">
+        <h1>Welcome back! 👋</h1>
+        <p>Here's what's happening in your area today</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="showNotifications()" style="border: none;">
+          <i class="fas fa-bell"></i> Notifications
+        </button>
+        <div class="user-info">
+          <div class="user-avatar">U</div>
+          <div>User</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-trash-alt"></i>
+        </div>
+        <div class="stat-value">12</div>
+        <div class="stat-label">Issues Reported</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-value">8</div>
+        <div class="stat-label">Resolved</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-value">450</div>
+        <div class="stat-label">Green Points</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-location-dot"></i>
+        </div>
+        <div class="stat-value">5</div>
+        <div class="stat-label">Nearby Bins</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Quick Actions</h3>
+        </div>
+        <div class="card-body">
+          <div class="quick-actions">
+            <a href="#" class="action-btn">
+              <div class="action-icon">
+                <i class="fas fa-plus"></i>
+              </div>
+              <span class="action-label">Report Issue</span>
+            </a>
+            <a href="#" class="action-btn">
+              <div class="action-icon">
+                <i class="fas fa-map-location-dot"></i>
+              </div>
+              <span class="action-label">View Map</span>
+            </a>
+            <a href="#" class="action-btn">
+              <div class="action-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <span class="action-label">Schedule</span>
+            </a>
+            <a href="#" class="action-btn">
+              <div class="action-icon">
+                <i class="fas fa-chart-pie"></i>
+              </div>
+              <span class="action-label">Rewards</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Recent Activity</h3>
+        </div>
+        <div class="card-body">
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="fas fa-check"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">Issue Resolved</div>
+                <div class="activity-time">2 hours ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">50 Points Earned</div>
+                <div class="activity-time">Yesterday</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="fas fa-bell"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">Bin #451 Almost Full</div>
+                <div class="activity-time">3 days ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="fas fa-trash"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">Waste Collected</div>
+                <div class="activity-time">5 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nearby Bins Section -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Nearby Waste Bins</h3>
+        <p class="card-subtitle">Within 500m of your location</p>
+      </div>
+      <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.75rem; border-left: 4px solid var(--success);">
+            <div style="font-weight: 600; margin-bottom: 0.5rem;">Bin #451</div>
+            <div style="font-size: 0.9rem; color: var(--neutral-700); margin-bottom: 0.5rem;"><i class="fas fa-map-marker"></i> Market Street</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge badge-success">60% Full</span>
+              <span style="font-size: 0.85rem;">25m away</span>
+            </div>
+          </div>
+          <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.75rem; border-left: 4px solid var(--warning);">
+            <div style="font-weight: 600; margin-bottom: 0.5rem;">Bin #452</div>
+            <div style="font-size: 0.9rem; color: var(--neutral-700); margin-bottom: 0.5rem;"><i class="fas fa-map-marker"></i> Park Avenue</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge badge-warning">85% Full</span>
+              <span style="font-size: 0.85rem;">120m away</span>
+            </div>
+          </div>
+          <div style="background: var(--neutral-50); padding: 1rem; border-radius: 0.75rem; border-left: 4px solid var(--info);">
+            <div style="font-weight: 600; margin-bottom: 0.5rem;">Bin #453</div>
+            <div style="font-size: 0.9rem; color: var(--neutral-700); margin-bottom: 0.5rem;"><i class="fas fa-map-marker"></i> Main Square</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge badge-info">40% Full</span>
+              <span style="font-size: 0.85rem;">340m away</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Toast notification function
+    function showNotificationToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        border-left: 4px solid #10b981;
+        font-size: 0.95rem;
+        animation: slideIn 0.3s ease;
+      `;
+      
+      if (type === 'success') toast.style.borderLeftColor = '#10b981';
+      if (type === 'error') toast.style.borderLeftColor = '#ef4444';
+      if (type === 'warning') toast.style.borderLeftColor = '#f59e0b';
+      if (type === 'info') toast.style.borderLeftColor = '#06b6d4';
+      
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    
+    // Load user information from localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+      const userName = localStorage.getItem('userName') || 'User';
+      const userEmail = localStorage.getItem('userEmail') || 'user@example.com';
+      const userRole = localStorage.getItem('userRole') || 'citizen';
+      
+      // Update welcome message
+      const firstLetter = userName.split(' ')[0].charAt(0);
+      const lastLetter = userName.split(' ')[1] ? userName.split(' ')[1].charAt(0) : '';
+      const initials = (firstLetter + lastLetter).toUpperCase();
+      
+      document.querySelector('.header-title h1').textContent = `Welcome back, ${userName.split(' ')[0]}! 👋`;
+      document.querySelector('.user-avatar').textContent = initials;
+      document.querySelector('.user-info > div:last-child').textContent = userName;
+      
+      // Add click handlers to sidebar links
+      document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const text = this.textContent.trim();
+          handleSidebarAction(text);
+        });
+      });
+      
+      // Add click handlers to action buttons
+      document.querySelectorAll('.action-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const label = this.querySelector('.action-label').textContent;
+          handleActionClick(label);
+        });
+      });
+      
+      // Add logout functionality
+      const logoutLink = document.querySelector('a[href="login.html"]');
+      if (logoutLink) {
+        logoutLink.onclick = function(e) {
+          e.preventDefault();
+          if (confirm('Are you sure you want to logout?')) {
+            localStorage.clear();
+            window.location.href = 'login.html';
+          }
+        };
+      }
+    });
+    
+    // Handle sidebar navigation
+    function handleSidebarAction(action) {
+      const actions = {
+        'Dashboard': () => showNotificationToast('📊 You are on the Dashboard', 'info'),
+        'Nearby Bins': () => showNotificationToast('📍 Opening map with nearby bins...', 'info'),
+        'Report Issue': () => showNotificationToast('⚠️ Opening issue report form...', 'info'),
+        'My Reports': () => showNotificationToast('📋 Loading your reports...', 'info'),
+        'Schedule': () => showNotificationToast('📅 Opening collection schedule...', 'info'),
+        'Green Points': () => showNotificationToast('🌿 Showing your green points...', 'info'),
+        'Settings': () => showNotificationToast('⚙️ Opening settings...', 'info'),
+        'Logout': () => {
+          if (confirm('Are you sure you want to logout?')) {
+            localStorage.clear();
+            window.location.href = 'login.html';
+          }
+        }
+      };
+      
+      if (actions[action]) {
+        try {
+          actions[action]();
+        } catch (e) {
+          showNotificationToast('Error: ' + e.message, 'error');
+        }
+      }
+    }
+    
+    // Handle action button clicks
+    function handleActionClick(action) {
+      const actions = {
+        'Report Issue': () => showNotificationToast('📝 Opening issue reporting form...', 'info'),
+        'View Map': () => showNotificationToast('🗺️ Opening interactive waste bin map...', 'info'),
+        'Schedule': () => showNotificationToast('📅 Opening collection schedule...', 'info'),
+        'Rewards': () => showNotificationToast('🏆 Opening rewards program...', 'info')
+      };
+      
+      if (actions[action]) {
+        try {
+          actions[action]();
+        } catch (e) {
+          showNotificationToast('Error: ' + e.message, 'error');
+        }
+      }
+    }
+    
+    // Notification button handler
+    function showNotifications() {
+      showNotificationToast('🔔 You have 3 new notifications:\n\n1. Bin #451 is 90% full\n2. Collection scheduled for today at 2 PM\n3. You earned 10 Green Points!', 'info');
+    }
+  </script>
+</body>
+</html>

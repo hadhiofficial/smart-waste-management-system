@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports - Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      padding: 2rem 1rem;
+      color: white;
+      position: fixed;
+      height: 100vh;
+      width: 260px;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .sidebar-logo {
+      font-size: 2rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .menu-item {
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .menu-item.active {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border-left: 3px solid white;
+      padding-left: calc(1rem - 3px);
+    }
+
+    .menu-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .main-content {
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 2rem;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .btn-export {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-export:hover {
+      background: #059669;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 350px;
+      margin-bottom: 1rem;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #10b981;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+
+    .export-options {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .export-btn {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.2s ease;
+    }
+
+    .export-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .date-filter {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .date-input {
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    @media (max-width: 768px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        z-index: 1000;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .chart-container {
+        height: 250px;
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .date-filter {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">🌿</div>
+        <div>
+          <div class="sidebar-title">Clean Bin</div>
+          <div class="sidebar-subtitle">Admin Panel</div>
+        </div>
+      </div>
+
+      <div class="sidebar-menu">
+        <a href="admin-dashboard.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="admin-bins.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-trash"></i></span>
+          <span>Bins Management</span>
+        </a>
+        <a href="admin-map.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-map-location-dot"></i></span>
+          <span>Live Map</span>
+        </a>
+        <a href="admin-complaints.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+          <span>Complaints</span>
+        </a>
+        <a href="admin-drivers.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-truck"></i></span>
+          <span>Drivers</span>
+        </a>
+        <a href="admin-users.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-users"></i></span>
+          <span>Users</span>
+        </a>
+        <a href="admin-reports.html" class="menu-item active">
+          <span class="menu-icon"><i class="fas fa-chart-bar"></i></span>
+          <span>Reports</span>
+        </a>
+        <a href="admin-settings.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-cog"></i></span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <div class="header-title">Reports & Analytics</div>
+        <button class="btn-export"><i class="fas fa-download"></i> Export All</button>
+      </div>
+
+      <div class="content-area">
+        <!-- Collections Report -->
+        <div class="content-card">
+          <div class="card-title">
+            <i class="fas fa-trash" style="color: #10b981;"></i>
+            Collections Report
+          </div>
+
+          <div class="date-filter">
+            <input type="date" class="date-input" value="2024-03-01">
+            <span style="align-self: center;">to</span>
+            <input type="date" class="date-input" value="2024-03-08">
+          </div>
+
+          <div class="chart-container">
+            <canvas id="collectionsChart"></canvas>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-value">2,847</div>
+              <div class="stat-label">Collections</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">45.3 t</div>
+              <div class="stat-label">Waste Collected</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">98.5%</div>
+              <div class="stat-label">On-Time Rate</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">847</div>
+              <div class="stat-label">Bins Served</div>
+            </div>
+          </div>
+
+          <div class="export-options">
+            <button class="export-btn"><i class="fas fa-file-pdf"></i> Export PDF</button>
+            <button class="export-btn"><i class="fas fa-file-excel"></i> Export Excel</button>
+            <button class="export-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
+          </div>
+        </div>
+
+        <!-- User Activity Report -->
+        <div class="content-card">
+          <div class="card-title">
+            <i class="fas fa-users" style="color: #06b6d4;"></i>
+            User Activity Report
+          </div>
+
+          <div class="chart-container">
+            <canvas id="activityChart"></canvas>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-value">3,247</div>
+              <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">2,854</div>
+              <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">1,456</div>
+              <div class="stat-label">Reports Submitted</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">847</div>
+              <div class="stat-label">EcoPoints Earned</div>
+            </div>
+          </div>
+
+          <div class="export-options">
+            <button class="export-btn"><i class="fas fa-file-pdf"></i> Export PDF</button>
+            <button class="export-btn"><i class="fas fa-file-excel"></i> Export Excel</button>
+          </div>
+        </div>
+
+        <!-- System Performance Report -->
+        <div class="content-card">
+          <div class="card-title">
+            <i class="fas fa-gauge-high" style="color: #f97316;"></i>
+            System Performance Metrics
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-value">99.7%</div>
+              <div class="stat-label">Uptime</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">45 ms</div>
+              <div class="stat-label">Avg Response Time</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">847</div>
+              <div class="stat-label">API Calls/Min</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">28 MB</div>
+              <div class="stat-label">Avg User Sessions</div>
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+            <strong style="color: #10b981;">✓ System Health: Excellent</strong><br>
+            <span style="color: #64748b; font-size: 0.9rem;">All systems operating within normal parameters. No critical issues detected.</span>
+          </div>
+
+          <div class="export-options">
+            <button class="export-btn"><i class="fas fa-file-pdf"></i> Export PDF</button>
+            <button class="export-btn"><i class="fas fa-file-excel"></i> Export Excel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script>
+    // Collections Chart
+    const collectionsCtx = document.getElementById('collectionsChart').getContext('2d');
+    new Chart(collectionsCtx, {
+      type: 'line',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Collections',
+          data: [420, 385, 445, 520, 490, 410, 380],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, max: 600 }
+        }
+      }
+    });
+
+    // Activity Chart
+    const activityCtx = document.getElementById('activityChart').getContext('2d');
+    new Chart(activityCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        datasets: [
+          {
+            label: 'Active Users',
+            data: [2400, 2520, 2854, 2890],
+            backgroundColor: '#06b6d4'
+          },
+          {
+            label: 'Reports Submitted',
+            data: [340, 380, 420, 460],
+            backgroundColor: '#10b981'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

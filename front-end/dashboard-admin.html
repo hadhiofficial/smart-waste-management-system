@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/modern.css">
+  <link rel="stylesheet" href="css/dashboard-enhanced.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    .dashboard-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1a2332 100%);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-grid-top {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(16, 185, 129, 0.3);
+      box-shadow: 0 12px 40px 0 rgba(16, 185, 129, 0.15);
+    }
+
+    .kpi-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #10b981;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .kpi-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .kpi-change {
+      font-size: 0.8rem;
+      color: rgba(16, 185, 129, 0.8);
+      margin-top: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .admin-grid-charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: white;
+    }
+
+    .action-btn:hover {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
+      border-color: rgba(16, 185, 129, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .action-icon {
+      font-size: 1.8rem;
+    }
+
+    .action-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .admin-grid-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin-grid-wide {
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+
+    .system-health {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .health-item {
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      border-left: 3px solid #10b981;
+    }
+
+    .health-label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 0.25rem;
+    }
+
+    .health-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #10b981;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      align-items: center;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 8px;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    @media (max-width: 1024px) {
+      .admin-grid-top {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+
+      .admin-grid-charts {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-grid-2col {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-grid-top {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .kpi-value {
+        font-size: 1.8rem;
+      }
+
+      .quick-actions {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      }
+
+      .action-icon {
+        font-size: 1.4rem;
+      }
+
+      .action-label {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="navbar-logo" style="font-size: 1.5rem;">♻️</div>
+      <div class="sidebar-title">CLEAN BIN</div>
+      <div style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">Admin Panel</div>
+    </div>
+
+    <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+      <div class="notification-badge" style="background: #ef4444; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; display: inline-block;">
+        8 Tasks Pending
+      </div>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li class="sidebar-item">
+        <a href="#dashboard" class="sidebar-link active">
+          <span class="sidebar-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#overview" class="sidebar-link">
+          <span class="sidebar-icon">👁️</span>
+          <span>System Overview</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#bins" class="sidebar-link">
+          <span class="sidebar-icon">🗑️</span>
+          <span>Bin Management</span>
+          <span class="sidebar-badge" style="background: #f59e0b;">128</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#complaints" class="sidebar-link">
+          <span class="sidebar-icon">⚠️</span>
+          <span>Complaints</span>
+          <span class="sidebar-badge" style="background: #ef4444;">5</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#drivers" class="sidebar-link">
+          <span class="sidebar-icon">🚚</span>
+          <span>Drivers & Tasks</span>
+          <span class="sidebar-badge" style="background: #06b6d4;">12</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#users" class="sidebar-link">
+          <span class="sidebar-icon">👥</span>
+          <span>Users</span>
+          <span class="sidebar-badge" style="background: #10b981;">1,240</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#analytics" class="sidebar-link">
+          <span class="sidebar-icon">📈</span>
+          <span>Analytics</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#reports" class="sidebar-link">
+          <span class="sidebar-icon">📋</span>
+          <span>Reports</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a href="#settings" class="sidebar-link">
+          <span class="sidebar-icon">⚙️</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+
+    <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;">
+      <button class="btn btn-ghost" style="width: 100%; text-align: left;" onclick="logoutAdmin()">
+        <span style="margin-right: 0.5rem;">🚪</span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper" style="margin-left: 260px;">
+    <!-- Header -->
+    <header class="dashboard-header" style="padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="sidebar-toggle" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">☰</button>
+        <div>
+          <h1 class="dashboard-title" style="margin: 0; font-size: 1.8rem;">Admin Dashboard</h1>
+          <p style="margin: 0; font-size: 0.85rem; color: rgba(255,255,255,0.6);">System Overview & Management</p>
+        </div>
+      </div>
+
+      <div class="header-right" style="display: flex; align-items: center; gap: 1.5rem;">
+        <div style="position: relative;">
+          <button class="notification-icon" style="background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; position: relative;">
+            🔔
+            <span class="notification-badge" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 0.7rem; padding: 0.2rem 0.4rem; border-radius: 10px; font-weight: 600;">8</span>
+          </button>
+        </div>
+
+        <div class="profile-menu" style="display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.08); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+          <div class="profile-avatar" id="profileAvatar" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9rem; font-weight: 600;">AD</div>
+          <div class="profile-info" style="display: none;">
+            <div class="profile-name" style="font-weight: 600; color: white;">Admin User</div>
+            <div class="profile-role" style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Administrator</div>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost" id="logoutBtn" onclick="logoutAdmin()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Logout</button>
+      </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container" style="padding: 2rem;">
+
+      <!-- Top KPI Cards -->
+      <div class="admin-grid-top">
+        <div class="kpi-card">
+          <p class="kpi-value">128</p>
+          <p class="kpi-label">Active Bins</p>
+          <p class="kpi-change">✓ +8 this week</p>
+        </div>
+        <div class="kpi-card">
+          <p class="kpi-value" style="color: #06b6d4;">12</p>
+          <p class="kpi-label">Active Routes</p>
+          <p class="kpi-change" style="color: rgba(6, 182, 212, 0.8);">→ 5 in progress</p>
+        </div>
+        <div class="kpi-card">
+          <p class="kpi-value" style="color: #f59e0b;">1,240</p>
+          <p class="kpi-label">Total Users</p>
+          <p class="kpi-change" style="color: rgba(245, 158, 11, 0.8);">↑ +25 today</p>
+        </div>
+        <div class="kpi-card">
+          <p class="kpi-value" style="color: #ef4444;">5</p>
+          <p class="kpi-label">Open Complaints</p>
+          <p class="kpi-change" style="color: rgba(239, 68, 68, 0.8);">⚠ Needs attention</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card" style="margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <h3 class="card-title">Quick Actions</h3>
+        </div>
+        <div class="quick-actions" style="padding: 1.5rem;">
+          <div class="action-btn" onclick="openBinModal()">
+            <span class="action-icon">➕</span>
+            <span class="action-label">Add Bin</span>
+          </div>
+          <div class="action-btn" onclick="showModal('assignTask')">
+            <span class="action-icon">🚚</span>
+            <span class="action-label">Assign Task</span>
+          </div>
+          <div class="action-btn" onclick="showModal('reportUser')">
+            <span class="action-icon">👤</span>
+            <span class="action-label">New User</span>
+          </div>
+          <div class="action-btn" onclick="showModal('schedulePickup')">
+            <span class="action-icon">📅</span>
+            <span class="action-label">Schedule</span>
+          </div>
+          <div class="action-btn" onclick="showModal('generateReport')">
+            <span class="action-icon">📊</span>
+            <span class="action-label">Report</span>
+          </div>
+          <div class="action-btn" onclick="showModal('systemSettings')">
+            <span class="action-icon">⚙️</span>
+            <span class="action-label">Settings</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Health & Charts Row -->
+      <div class="admin-grid-2col">
+        <!-- System Health Monitor -->
+        <div class="card" style="border: 1px solid rgba(255,255,255,0.1);">
+          <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <h3 class="card-title">System Health</h3>
+            <span class="badge badge-success">Operational</span>
+          </div>
+          <div style="padding: 1.5rem;">
+            <div class="system-health">
+              <div class="health-item">
+                <div class="health-label">Server Status</div>
+                <div class="health-value">✓ Online</div>
+              </div>
+              <div class="health-item">
+                <div class="health-label">Database</div>
+                <div class="health-value">99.8%</div>
+              </div>
+              <div class="health-item">
+                <div class="health-label">API Response</div>
+                <div class="health-value">142ms</div>
+              </div>
+              <div class="health-item">
+                <div class="health-label">Uptime</div>
+                <div class="health-value">45 days</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-time Activity Feed -->
+        <div class="card" style="border: 1px solid rgba(255,255,255,0.1);">
+          <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <h3 class="card-title">Recent Activity</h3>
+          </div>
+          <div style="padding: 0;">
+            <div class="activity-item">
+              <div class="activity-icon">🔔</div>
+              <div class="activity-content">
+                <div class="activity-title">Route A completed</div>
+                <div class="activity-time">5 minutes ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">⚠️</div>
+              <div class="activity-content">
+                <div class="activity-title">Complaint #1245 resolved</div>
+                <div class="activity-time">12 minutes ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">👤</div>
+              <div class="activity-content">
+                <div class="activity-title">New user registered</div>
+                <div class="activity-time">1 hour ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">🗑️</div>
+              <div class="activity-content">
+                <div class="activity-title">Bin #BIN-045 maintenance</div>
+                <div class="activity-time">2 hours ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics Charts -->
+      <div class="admin-grid-charts">
+        <!-- Waste Collected Chart -->
+        <div class="card" style="border: 1px solid rgba(255,255,255,0.1);">
+          <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <h3 class="card-title">Waste Collected (7 Days)</h3>
+          </div>
+          <div style="position: relative; height: 280px; margin-top: 1rem; padding: 0 1rem;">
+            <canvas id="wasteByAreaChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Bin Status Distribution -->
+        <div class="card" style="border: 1px solid rgba(255,255,255,0.1);">
+          <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <h3 class="card-title">Bin Status Distribution</h3>
+          </div>
+          <div style="position: relative; height: 280px; margin-top: 1rem; padding: 0 1rem;">
+            <canvas id="binStatusChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Charts Row -->
+      <div class="admin-grid-charts">
+        <!-- Complaint Trends -->
+        <div class="card" style="border: 1px solid rgba(255,255,255,0.1);">
+          <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <h3 class="card-title">Complaint Trends (Last 30 Days)</h3>
+          </div>
+          <div style="position: relative; height: 280px; margin-top: 1rem; padding: 0 1rem;">
+            <canvas id="complaintTrendsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Collection Performance -->
+        <div class="card" style="border: 1px solid rgba(255,255,255,0.1);">
+          <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <h3 class="card-title">Collection Performance</h3>
+          </div>
+          <div style="position: relative; height: 280px; margin-top: 1rem; padding: 0 1rem;">
+            <canvas id="collectionPerformanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bin Management Section -->
+      <div id="bins" class="card" style="margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <h3 class="card-title">Waste Bin Management</h3>
+          <button class="btn btn-sm btn-primary" onclick="openBinModal()">+ Add Bin</button>
+        </div>
+
+        <div style="margin-top: 1rem; padding: 0 1.5rem;">
+          <input type="text" id="searchBins" class="form-control" placeholder="Search bins by ID or location..." style="margin-bottom: 1rem;">
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Bin ID</th>
+                <th>Location</th>
+                <th>Area</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th>Last Collection</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="binsTableBody">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Complaints Management -->
+      <div id="complaints" class="card" style="margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <h3 class="card-title">Recent Complaints & Reports</h3>
+          <span class="badge badge-danger">5 Open</span>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <div style="display: flex; gap: 1rem; margin-bottom: 1rem; padding: 0 1.5rem;">
+            <button class="btn btn-sm btn-ghost" onclick="filterComplaints('all')">All</button>
+            <button class="btn btn-sm btn-ghost" onclick="filterComplaints('open')">Open</button>
+            <button class="btn btn-sm btn-ghost" onclick="filterComplaints('in-progress')">In Progress</button>
+            <button class="btn btn-sm btn-ghost" onclick="filterComplaints('resolved')">Resolved</button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Reported By</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="complaintsTableBody">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Driver Tasks & Routes -->
+      <div id="drivers" class="card" style="margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem;">
+          <h3 class="card-title">Active Driver Tasks & Routes</h3>
+          <button class="btn btn-sm btn-primary">+ Assign New Task</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; padding: 0 1.5rem;">
+          <div class="card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border: 1px solid rgba(16, 185, 129, 0.2);">
+            <div style="padding: 1rem;">
+              <h4 style="margin: 0 0 0.5rem 0; color: #10b981;">🚚 Route A - Downtown</h4>
+              <p style="font-size: 0.9rem; margin: 0.25rem 0; color: rgba(255,255,255,0.7);">Driver: <strong>Amit Patel</strong></p>
+              <p style="font-size: 0.9rem; margin: 0.25rem 0; color: rgba(255,255,255,0.7);">Bins: <strong>6</strong></p>
+              <p style="font-size: 0.9rem; margin: 0.5rem 0; color: rgba(255,255,255,0.7);">Progress: <strong>4/6 completed</strong></p>
+              <div class="progress" style="background: rgba(0,0,0,0.2); height: 6px; border-radius: 3px; margin: 0.5rem 0; overflow: hidden;">
+                <div style="background: #10b981; height: 100%; width: 66%; border-radius: 3px;"></div>
+              </div>
+              <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0; color: rgba(255,255,255,0.5);">Updated 5 minutes ago</p>
+              <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button class="btn btn-sm btn-outline" style="flex:1; font-size: 0.75rem;">View Details</button>
+                <button class="btn btn-sm btn-ghost" style="flex:1; font-size: 0.75rem;">Track</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%); border: 1px solid rgba(245, 158, 11, 0.2);">
+            <div style="padding: 1rem;">
+              <h4 style="margin: 0 0 0.5rem 0; color: #f59e0b;">🚚 Route B - Suburbs</h4>
+              <p style="font-size: 0.9rem; margin: 0.25rem 0; color: rgba(255,255,255,0.7);">Driver: <strong>Vikram Singh</strong></p>
+              <p style="font-size: 0.9rem; margin: 0.25rem 0; color: rgba(255,255,255,0.7);">Bins: <strong>4</strong></p>
+              <p style="font-size: 0.9rem; margin: 0.5rem 0; color: rgba(255,255,255,0.7);">Status: <span class="badge badge-warning">Pending Start</span></p>
+              <div class="progress" style="background: rgba(0,0,0,0.2); height: 6px; border-radius: 3px; margin: 0.5rem 0; overflow: hidden;">
+                <div style="background: #f59e0b; height: 100%; width: 0%; border-radius: 3px;"></div>
+              </div>
+              <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0; color: rgba(255,255,255,0.5);">Scheduled for today</p>
+              <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button class="btn btn-sm btn-primary" style="flex:1; font-size: 0.75rem;">Start Task</button>
+                <button class="btn btn-sm btn-ghost" style="flex:1; font-size: 0.75rem;">Edit</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%); border: 1px solid rgba(6, 182, 212, 0.2);">
+            <div style="padding: 1rem;">
+              <h4 style="margin: 0 0 0.5rem 0; color: #06b6d4;">🚚 Route C - Industrial</h4>
+              <p style="font-size: 0.9rem; margin: 0.25rem 0; color: rgba(255,255,255,0.7);">Driver: <strong>Sarah Ahmed</strong></p>
+              <p style="font-size: 0.9rem; margin: 0.25rem 0; color: rgba(255,255,255,0.7);">Bins: <strong>8</strong></p>
+              <p style="font-size: 0.9rem; margin: 0.5rem 0; color: rgba(255,255,255,0.7);">Progress: <strong>8/8 completed</strong></p>
+              <div class="progress" style="background: rgba(0,0,0,0.2); height: 6px; border-radius: 3px; margin: 0.5rem 0; overflow: hidden;">
+                <div style="background: #06b6d4; height: 100%; width: 100%; border-radius: 3px;"></div>
+              </div>
+              <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0; color: rgba(255,255,255,0.5);">Completed 2 hours ago</p>
+              <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button class="btn btn-sm btn-ghost" style="flex:1; font-size: 0.75rem;">View Report</button>
+                <button class="btn btn-sm btn-ghost" style="flex:1; font-size: 0.75rem;">Assign Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Management Preview -->
+      <div id="users" class="card" style="margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <h3 class="card-title">User Management</h3>
+          <button class="btn btn-sm btn-primary" onclick="showModal('newUser')">+ Add User</button>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 1.5rem;">
+            <div style="text-align: center; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+              <p style="font-size: 2rem; margin: 0; color: #10b981;">1,240</p>
+              <p style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem;">Total Users</p>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: rgba(6, 182, 212, 0.1); border-radius: 8px;">
+              <p style="font-size: 2rem; margin: 0; color: #06b6d4;">856</p>
+              <p style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem;">Active Users</p>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
+              <p style="font-size: 2rem; margin: 0; color: #f59e0b;">45</p>
+              <p style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem;">Drivers</p>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+              <p style="font-size: 2rem; margin: 0; color: #ef4444;">12</p>
+              <p style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem;">Suspended</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr>
+                <td><strong>John Smith</strong></td>
+                <td>john.smith@example.com</td>
+                <td><span class="badge badge-info">Citizen</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td>2025-10-15</td>
+                <td>
+                  <button class="btn btn-sm btn-ghost">View</button>
+                  <button class="btn btn-sm btn-ghost">Edit</button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Amit Patel</strong></td>
+                <td>amit.patel@example.com</td>
+                <td><span class="badge" style="background: #06b6d4;">Driver</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td>2025-09-20</td>
+                <td>
+                  <button class="btn btn-sm btn-ghost">View</button>
+                  <button class="btn btn-sm btn-ghost">Edit</button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Sarah Ahmed</strong></td>
+                <td>sarah.ahmed@example.com</td>
+                <td><span class="badge" style="background: #06b6d4;">Driver</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td>2025-08-10</td>
+                <td>
+                  <button class="btn btn-sm btn-ghost">View</button>
+                  <button class="btn btn-sm btn-ghost">Edit</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <!-- Bin Modal -->
+  <div id="binModal" class="modal">
+    <div class="modal-dialog" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Bin</h3>
+        <button class="modal-close" onclick="Modal.close('binModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label class="label">Bin ID</label>
+            <input type="text" class="form-control" placeholder="BIN-001">
+          </div>
+          <div>
+            <label class="label">Type</label>
+            <select class="form-control">
+              <option>Waste</option>
+              <option>Recycling</option>
+              <option>Organic</option>
+              <option>Hazardous</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label class="label">Location</label>
+          <input type="text" class="form-control" placeholder="Enter location">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label class="label">Area</label>
+            <select class="form-control">
+              <option>Downtown</option>
+              <option>Suburbs</option>
+              <option>Industrial</option>
+              <option>Residential</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Capacity (L)</label>
+            <input type="number" class="form-control" placeholder="240">
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+          <button class="btn btn-primary" style="flex: 1;">Add Bin</button>
+          <button class="btn btn-ghost" style="flex: 1;" onclick="Modal.close('binModal')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/charts.js"></script>
+
+  <script>
+    // Admin Dashboard Functions
+    function logoutAdmin() {
+      localStorage.clear();
+      window.location.href = './login.html';
+    }
+
+    function showModal(modalType) {
+      const message = {
+        'assignTask': 'Assign new task modal',
+        'reportUser': 'Report user modal',
+        'schedulePickup': 'Schedule pickup modal',
+        'generateReport': 'Generate report modal',
+        'systemSettings': 'System settings modal',
+        'newUser': 'New user modal'
+      };
+      showToast(message[modalType] || 'Feature coming soon', 'info');
+    }
+
+    function filterComplaints(status) {
+      showToast(`Filtering complaints by: ${status}`, 'info');
+      // Add filtering logic here
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? '#10b981' : type === 'danger' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#06b6d4';
+      
+      toast.style.cssText = `
+        background: ${bgColor};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease;
+        max-width: 300px;
+      `;
+      toast.textContent = message;
+      
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Check authentication and authorization
+    try {
+      if (Auth.requireAuth()) {
+        if (!Auth.requireRole('admin')) {
+          window.location.href = './login.html';
+        }
+      }
+    } catch (e) {
+      console.warn('Auth check error, allowing access:', e);
+    }
+
+    // Initialize on page load
+    onDOMReady(function() {
+      try {
+        // Populate dashboard
+        populateDashboardStats();
+        populateComplaintsTable();
+        populateBinsTable();
+
+        // Initialize charts
+        setTimeout(() => {
+          initWasteByAreaChart();
+          initBinStatusChart();
+          initComplaintTrendsChart();
+          initCollectionPerformanceChart();
+        }, 100);
+
+        // Setup search
+        filterTable('searchBins', 'binsTableBody');
+
+        console.log('Enhanced Admin Dashboard Loaded ✓');
+        showToast('Welcome Admin User! System is operational', 'success');
+      } catch (e) {
+        console.log('Dashboard initialization:', e.message);
+      }
+    });
+
+    // Add sidebar navigation
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

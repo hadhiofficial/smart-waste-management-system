@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Login - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .auth-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
+      overflow: hidden;
+    }
+
+    .auth-brand {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: white;
+    }
+
+    .brand-logo {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .brand-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .brand-subtitle {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      text-align: center;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .brand-features {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .auth-form {
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-header {
+      margin-bottom: 2rem;
+    }
+
+    .form-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+      font-size: 0.95rem;
+      color: #64748b;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .form-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #10b981;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .form-input-icon {
+      position: absolute;
+      right: 1rem;
+      color: #cbd5e1;
+      font-size: 1rem;
+    }
+
+    .form-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .checkbox {
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      accent-color: #10b981;
+    }
+
+    .checkbox-label {
+      cursor: pointer;
+      color: #64748b;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      width: 100%;
+      padding: 0.85rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid #dc2626;
+    }
+
+    .alert-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .form-footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-top: 1rem;
+    }
+
+    .form-footer a {
+      color: #10b981;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #10b981;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .back-button:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .auth-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-brand {
+        display: none;
+      }
+
+      .auth-form {
+        padding: 2rem 1.5rem;
+      }
+
+      .form-title {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-wrapper">
+      <!-- Left - Branding -->
+      <div class="auth-brand">
+        <div class="brand-logo">👤</div>
+        <div class="brand-title">Citizen Portal</div>
+        <div class="brand-subtitle">Report waste and earn rewards</div>
+        
+        <div class="brand-features">
+          <div class="feature">
+            <div class="feature-icon"><i class="fas fa-check"></i></div>
+            <span>Report waste issues easily</span>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><i class="fas fa-check"></i></div>
+            <span>Earn EcoPoints & rewards</span>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><i class="fas fa-check"></i></div>
+            <span>Find nearby bins</span>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><i class="fas fa-check"></i></div>
+            <span>Track your impact</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right - Form -->
+      <div class="auth-form">
+        <a href="login-roles.html" class="back-button">
+          <i class="fas fa-arrow-left"></i> Back to Roles
+        </a>
+
+        <div class="form-header">
+          <div class="form-title">Citizen Login</div>
+          <div class="form-subtitle">Sign in to your account</div>
+        </div>
+
+        <!-- Error Alert (hidden by default) -->
+        <div class="alert" id="errorAlert" style="display: none;">
+          <span class="alert-icon"><i class="fas fa-exclamation-circle"></i></span>
+          <div id="errorMessage"></div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="form-input-wrapper">
+              <input type="email" class="form-input" placeholder="citizen@example.com" id="email" required>
+              <span class="form-input-icon"><i class="fas fa-envelope"></i></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="form-input-wrapper">
+              <input type="password" class="form-input" placeholder="••••••••" id="password" required>
+              <span class="form-input-icon"><i class="fas fa-lock"></i></span>
+            </div>
+          </div>
+
+          <div class="form-checkbox">
+            <input type="checkbox" id="rememberMe" class="checkbox">
+            <label for="rememberMe" class="checkbox-label">Remember me</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="loginBtn">
+            <span>Sign In</span>
+          </button>
+
+          <div class="form-footer" style="margin-top: 2rem;">
+            <a href="#">Forgot password?</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorAlert = document.getElementById('errorAlert');
+      const errorMessage = document.getElementById('errorMessage');
+      const btn = document.getElementById('loginBtn');
+      const originalText = btn.innerHTML;
+      
+      if (!email || !password) {
+        errorMessage.textContent = 'Please enter both email and password.';
+        errorAlert.style.display = 'flex';
+        return;
+      }
+      
+      errorAlert.style.display = 'none';
+      btn.innerHTML = '<span class="spinner"></span> Signing in...';
+      btn.disabled = true;
+
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userRole', 'citizen');
+      localStorage.setItem('isLoggedIn', 'true');
+      
+      window.location.href = 'citizen-dashboard.html';
+    });
+  </script>
+</body>
+</html>

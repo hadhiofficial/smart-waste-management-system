@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Dashboard - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .header-greeting {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-avatar {
+      width: 56px;
+      height: 56px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .header-text h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-text p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .header-score {
+      background: rgba(255,255,255,0.2);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .header-score-label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-score-value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .header-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    /* Progress Rank */
+    .rank-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .rank-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .rank-title {
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      width: 65%;
+      border-radius: 4px;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .eco-badge {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #10b981;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Quick Actions */
+    .actions-section {
+      margin-bottom: 2rem;
+    }
+
+    .actions-title {
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .action-btn {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 1.5rem 1rem;
+      border-radius: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .action-btn:hover {
+      border-color: #10b981;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .action-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .action-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #0f172a;
+    }
+
+    /* Nearby Bins */
+    .section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .view-all {
+      color: #10b981;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .bins-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .bin-card {
+      background: #f8fafc;
+      padding: 1.25rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .bin-card:hover {
+      border-color: #10b981;
+      background: #ecfdf5;
+    }
+
+    .bin-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .bin-id {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .bin-distance {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 0.75rem;
+    }
+
+    .bin-status {
+      display: inline-block;
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .status-full {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-medium {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .status-empty {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    /* Activity Feed */
+    .activity-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border-left: 3px solid #10b981;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      background: #ecfdf5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #10b981;
+      flex-shrink: 0;
+      font-size: 1.1rem;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-desc {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .activity-time {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 0.25rem;
+    }
+
+    /* Status chips */
+    .chip {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .chip-pending {
+      background: #dbeafe;
+      color: #0c4a6e;
+    }
+
+    .chip-progress {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .chip-resolved {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #64748b;
+      cursor: pointer;
+    }
+
+    .btn {
+      padding: 0.9rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Bottom Navigation (Mobile) */
+    .bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      padding: 0.5rem;
+      display: flex;
+      justify-content: space-around;
+      z-index: 100;
+    }
+
+    .nav-item {
+      flex: 1;
+      padding: 0.75rem;
+      text-align: center;
+      color: #94a3b8;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: #10b981;
+    }
+
+    .nav-icon {
+      font-size: 1.3rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+        padding-bottom: 80px;
+      }
+
+      .rank-section {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .bins-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .bottom-nav {
+        display: flex;
+      }
+
+      .header {
+        padding: 1.5rem;
+      }
+
+      .header-top {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .header-score {
+        align-self: flex-end;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-top {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .bins-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header with Welcome & Points -->
+    <div class="header">
+      <div class="header-top">
+        <div class="header-greeting">
+          <div class="header-avatar">👤</div>
+          <div class="header-text">
+            <h2 id="greetingName">Hi Sarah!</h2>
+            <p>Keep our city clean & green</p>
+          </div>
+        </div>
+        <div class="header-score">
+          <div class="header-score-label">🏆 EcoPoints</div>
+          <div class="header-score-value">4,230</div>
+          <div class="header-subtitle">Gold Status 🥇</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress & Rank -->
+    <div class="rank-section">
+      <div class="rank-card">
+        <div class="rank-title">
+          <i class="fas fa-chart-line"></i> Progress to Platinum
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 65%;"></div>
+        </div>
+        <div class="progress-text">650 / 1000 points needed</div>
+      </div>
+
+      <div class="rank-card">
+        <div class="rank-title">
+          <i class="fas fa-leaf"></i> This Month's Goals
+        </div>
+        <div style="font-size: 0.9rem; color: #64748b;">
+          <div style="margin-bottom: 0.5rem;">✓ 12/15 reports submitted</div>
+          <div>✓ 8 recycling tips shared</div>
+        </div>
+        <div class="eco-badge">On Track! 🎯</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <div class="actions-title">Quick Actions</div>
+      <div class="actions-grid">
+        <div class="action-btn" onclick="action('report')">
+          <div class="action-icon">🚨</div>
+          <div class="action-label">Report Issue</div>
+        </div>
+        <div class="action-btn" onclick="action('scan')">
+          <div class="action-icon">📱</div>
+          <div class="action-label">Scan QR</div>
+        </div>
+        <div class="action-btn" onclick="action('bins')">
+          <div class="action-icon">🗑️</div>
+          <div class="action-label">Nearby Bins</div>
+        </div>
+        <div class="action-btn" onclick="action('schedule')">
+          <div class="action-icon">📅</div>
+          <div class="action-label">Schedule</div>
+        </div>
+        <div class="action-btn" onclick="action('reports')">
+          <div class="action-icon">📋</div>
+          <div class="action-label">My Reports</div>
+        </div>
+        <div class="action-btn" onclick="action('rewards')">
+          <div class="action-icon">🎁</div>
+          <div class="action-label">Rewards</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nearby Waste Bins -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">
+          <i class="fas fa-map-marker-alt"></i> Nearby Bins
+        </div>
+        <a href="#" class="view-all">View Map</a>
+      </div>
+
+      <div class="bins-grid">
+        <div class="bin-card">
+          <div class="bin-icon">🟢</div>
+          <div class="bin-id">BIN-2847</div>
+          <div class="bin-distance">247 m away</div>
+          <span class="bin-status status-empty">Empty</span>
+        </div>
+        <div class="bin-card">
+          <div class="bin-icon">🟡</div>
+          <div class="bin-id">BIN-2845</div>
+          <div class="bin-distance">512 m away</div>
+          <span class="bin-status status-medium">60% Full</span>
+        </div>
+        <div class="bin-card">
+          <div class="bin-icon">🔴</div>
+          <div class="bin-id">BIN-2843</div>
+          <div class="bin-distance">1.2 km away</div>
+          <span class="bin-status status-full">Overflowing</span>
+        </div>
+        <div class="bin-card">
+          <div class="bin-icon">🟢</div>
+          <div class="bin-id">BIN-2841</div>
+          <div class="bin-distance">1.5 km away</div>
+          <span class="bin-status status-empty">Empty</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Reports -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">
+          <i class="fas fa-history"></i> My Recent Reports
+        </div>
+        <a href="#" class="view-all">View All</a>
+      </div>
+
+      <div class="activity-feed">
+        <div class="activity-item">
+          <div class="activity-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="activity-content">
+            <div class="activity-title">Overflowing Bin - Downtown Market</div>
+            <div class="activity-desc">Report confirmed and cleaning scheduled</div>
+            <div class="activity-time">Resolved 2 hours ago • +150 points</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="chip chip-resolved">Resolved</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-item" style="border-left-color: #f59e0b;">
+          <div class="activity-icon" style="background: #fef3c7; color: #b45309;">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Damaged Bin - Park Avenue</div>
+            <div class="activity-desc">Maintenance team assigned, repair in progress</div>
+            <div class="activity-time">Updated 5 hours ago • +100 points</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="chip chip-progress">In Progress</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-item" style="border-left-color: #06b6d4;">
+          <div class="activity-icon" style="background: #dbeafe; color: #0c4a6e;">
+            <i class="fas fa-circle-info"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Foul Smell - School Road</div>
+            <div class="activity-desc">Awaiting admin review and response</div>
+            <div class="activity-time">Submitted 1 day ago • +50 points pending</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="chip chip-pending">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="section" style="margin-bottom: 4rem;">
+      <div class="section-header">
+        <div class="section-title">
+          <i class="fas fa-lightbulb"></i> Eco Tips
+        </div>
+      </div>
+
+      <div style="padding: 1rem; background: linear-gradient(135deg, #ecfdf5, #f0fdf4); border-radius: 12px; border-left: 4px solid #10b981;">
+        <strong>💡 Tip of the Day</strong>
+        <p style="margin-top: 0.5rem; font-size: 0.95rem; color: #064e3b; line-height: 1.6;">
+          Separate your waste properly! Food waste is perfect for composting. Help us reduce landfill burden by 30% this year.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <div class="bottom-nav">
+    <button class="nav-item active">
+      <span class="nav-icon"><i class="fas fa-home"></i></span>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="action('bins')">
+      <span class="nav-icon"><i class="fas fa-map-marker"></i></span>
+      <span>Bins</span>
+    </button>
+    <button class="nav-item" onclick="action('report')">
+      <span class="nav-icon"><i class="fas fa-plus-circle"></i></span>
+      <span>Report</span>
+    </button>
+    <button class="nav-item" onclick="action('rewards')">
+      <span class="nav-icon"><i class="fas fa-trophy"></i></span>
+      <span>Rewards</span>
+    </button>
+    <button class="nav-item" onclick="action('profile')">
+      <span class="nav-icon"><i class="fas fa-user"></i></span>
+      <span>Profile</span>
+    </button>
+  </div>
+
+  <script>
+    // Load user name on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const userName = localStorage.getItem('userName') || 'User';
+      const greetingElement = document.getElementById('greetingName');
+      if (greetingElement) {
+        const firstName = userName.split(' ')[0];
+        greetingElement.textContent = `Hi ${firstName}!`;
+      }
+    });
+
+    function action(type) {
+      const links = {
+        report: 'report-waste.html',
+        bins: 'nearby-bins.html',
+        schedule: 'schedule.html',
+        reports: 'my-reports.html',
+        rewards: 'green-points.html',
+        profile: 'settings.html',
+        scan: '#'
+      };
+
+      if (links[type] && links[type] !== '#') {
+        window.location.href = links[type];
+      } else {
+        alert('Feature coming soon!');
+      }
+    }
+  </script>
+</body>
+</html>

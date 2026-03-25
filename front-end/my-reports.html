@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Reports - CLEAN BIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/modern.css">
+  <style>
+    body { display: flex; background: linear-gradient(135deg, #f9fafb 0%, #ecfdf5 100%); min-height: 100vh; }
+    .sidebar { width: 260px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-right: 1px solid rgba(0, 0, 0, 0.05); padding: 1.5rem 0; height: 100vh; position: fixed; left: 0; overflow-y: auto; box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08); }
+    .sidebar-brand { padding: 0 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; color: var(--primary-green); text-decoration: none; }
+    .sidebar-brand i { font-size: 1.5rem; }
+    .sidebar-brand span { font-weight: 700; font-size: 1.1rem; }
+    .sidebar-menu { list-style: none; padding: 0; }
+    .sidebar-item { margin-bottom: 0.5rem; }
+    .sidebar-link { display: flex; align-items: center; gap: 1rem; padding: 0.875rem 1.5rem; color: var(--neutral-700); text-decoration: none; transition: all var(--transition-base); border-left: 3px solid transparent; }
+    .sidebar-link:hover, .sidebar-link.active { background: rgba(16, 185, 129, 0.08); color: var(--primary-green); border-left-color: var(--primary-green); }
+    .sidebar-link i { width: 20px; text-align: center; }
+    .main-content { margin-left: 260px; flex: 1; padding: 2rem; min-height: 100vh; }
+    .header { margin-bottom: 2rem; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.3); }
+    .header h1 { margin: 0; font-size: 1.75rem; color: var(--primary-dark); }
+    .header p { margin: 0; color: var(--neutral-600); font-size: 0.9rem; }
+    .reports-table { width: 100%; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border-radius: 1rem; overflow: hidden; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05); }
+    .reports-table table { width: 100%; border-collapse: collapse; }
+    .reports-table thead { background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; }
+    .reports-table th { padding: 1rem; text-align: left; font-weight: 600; }
+    .reports-table td { padding: 1rem; border-bottom: 1px solid var(--neutral-200); }
+    .reports-table tbody tr:hover { background: rgba(16, 185, 129, 0.05); }
+    .badge { padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+    .badge-open { background: #ef4444; color: white; }
+    .badge-progress { background: #f59e0b; color: white; }
+    .badge-resolved { background: #10b981; color: white; }
+    .btn-action { padding: 0.5rem 1rem; background: var(--primary-green); color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; }
+    .btn-action:hover { background: #059669; }
+    @media (max-width: 1024px) {
+      .sidebar { width: 70px; }
+      .main-content { margin-left: 70px; }
+      .sidebar-link span { display: none; }
+      .sidebar-brand span { display: none; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; padding: 1rem; }
+      .reports-table table { font-size: 0.9rem; }
+      .reports-table th, .reports-table td { padding: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <a href="dashboard-user.html" class="sidebar-brand"><i class="fas fa-leaf"></i><span>CLEAN BIN</span></a>
+    <ul class="sidebar-menu">
+      <li class="sidebar-item"><a href="dashboard-user.html" class="sidebar-link"><i class="fas fa-chart-area"></i> <span>Dashboard</span></a></li>
+      <li class="sidebar-item"><a href="nearby-bins.html" class="sidebar-link"><i class="fas fa-map"></i> <span>Nearby Bins</span></a></li>
+      <li class="sidebar-item"><a href="report-issue.html" class="sidebar-link"><i class="fas fa-exclamation-circle"></i> <span>Report Issue</span></a></li>
+      <li class="sidebar-item"><a href="my-reports.html" class="sidebar-link active"><i class="fas fa-list"></i> <span>My Reports</span></a></li>
+      <li class="sidebar-item"><a href="schedule.html" class="sidebar-link"><i class="fas fa-calendar"></i> <span>Schedule</span></a></li>
+      <li class="sidebar-item"><a href="green-points.html" class="sidebar-link"><i class="fas fa-leaf"></i> <span>Green Points</span></a></li>
+      <li class="sidebar-item"><a href="settings.html" class="sidebar-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+      <li class="sidebar-item"><a href="login.html" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <div class="header">
+      <h1>📋 My Reports</h1>
+      <p>Track all issues you've reported</p>
+    </div>
+
+    <div class="reports-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Report ID</th>
+            <th>Issue Type</th>
+            <th>Location</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#R001</td>
+            <td>Bin Overflow</td>
+            <td>Market Street</td>
+            <td>Mar 15, 2026</td>
+            <td><span class="badge badge-resolved">✓ Resolved</span></td>
+            <td><button class="btn-action">View</button></td>
+          </tr>
+          <tr>
+            <td>#R002</td>
+            <td>Foul Smell</td>
+            <td>Park Avenue</td>
+            <td>Mar 14, 2026</td>
+            <td><span class="badge badge-progress">⏳ In Progress</span></td>
+            <td><button class="btn-action">View</button></td>
+          </tr>
+          <tr>
+            <td>#R003</td>
+            <td>Damaged Bin</td>
+            <td>Canal Road</td>
+            <td>Mar 10, 2026</td>
+            <td><span class="badge badge-resolved">✓ Resolved</span></td>
+            <td><button class="btn-action">View</button></td>
+          </tr>
+          <tr>
+            <td>#R004</td>
+            <td>Misplaced Waste</td>
+            <td>Gulberg Road</td>
+            <td>Mar 8, 2026</td>
+            <td><span class="badge badge-open">● Open</span></td>
+            <td><button class="btn-action">View</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

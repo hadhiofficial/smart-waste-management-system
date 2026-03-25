@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design System - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.6;
+    }
+
+    /* Design System Colors */
+    :root {
+      --primary: #10b981;
+      --primary-light: #ecfdf5;
+      --primary-dark: #064e3b;
+      --bg: #f8fafc;
+      --text: #0f172a;
+      --border: #e2e8f0;
+      --alert-orange: #f97316;
+      --alert-red: #dc2626;
+      --alert-yellow: #f59e0b;
+      --success: #10b981;
+      --shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      padding: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: #64748b;
+    }
+
+    /* Card */
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .card h3 {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Component Section */
+    .component-group {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .component-group h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .component-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f1f5f9;
+      border-radius: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-danger {
+      background: var(--alert-red);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #b91c1c;
+    }
+
+    .btn-disabled {
+      background: #cbd5e1;
+      color: #94a3b8;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .btn-loading {
+      position: relative;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Status Chips */
+    .chip {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .chip-success {
+      background: #d1fae5;
+      color: #047857;
+    }
+
+    .chip-warning {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .chip-pending {
+      background: #dbeafe;
+      color: #0c4a6e;
+    }
+
+    .chip-error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* Input Fields */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    /* KPI Card */
+    .kpi-card {
+      background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+      border: 1px solid #d1fae5;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .kpi-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-label {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-change {
+      font-size: 0.85rem;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    /* Task Card */
+    .task-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .task-id {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .task-detail {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+
+    /* Table */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .table th {
+      background: #f1f5f9;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #64748b;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .table tr:hover {
+      background: #f8fafc;
+    }
+
+    /* Alert */
+    .alert {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid var(--alert-red);
+    }
+
+    .alert-warning {
+      background: #fef3c7;
+      color: #b45309;
+      border-left: 4px solid var(--alert-yellow);
+    }
+
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+      border-left: 4px solid var(--primary);
+    }
+
+    .alert-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 2px dashed var(--border);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-desc {
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* Color Palette */
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .color-swatch {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .color-box {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .color-label {
+      padding: 0.75rem;
+      background: white;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    /* Loading Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 12px;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-text {
+      height: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .skeleton-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+    }
+
+    /* Navigation */
+    nav {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    nav a {
+      display: inline-block;
+      margin-right: 1.5rem;
+      color: #64748b;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      padding-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .component-showcase {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .text-sm {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .font-mono {
+      font-family: 'Courier New', monospace;
+      background: #f1f5f9;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <a href="#colors" class="active">Colors</a>
+    <a href="#typography">Typography</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#inputs">Inputs</a>
+    <a href="#components">Components</a>
+    <a href="#states">States</a>
+  </nav>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🌿 Smart Waste Management - Design System</h1>
+    <p>Complete UI kit for Admin, Driver, and Citizen portals with all components and states</p>
+  </div>
+
+  <div class="container">
+    <!-- Color Palette -->
+    <div class="component-group" id="colors">
+      <h2>🎨 Color Palette</h2>
+      <div class="palette">
+        <div class="color-swatch">
+          <div class="color-box" style="background: #10b981;">Primary</div>
+          <div class="color-label">#10b981</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-box" style="background: #ecfdf5;">Light</div>
+          <div class="color-label">#ecfdf5</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-box" style="background: #064e3b; color: white;">Dark</div>
+          <div class="color-label">#064e3b</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-box" style="background: #f8fafc; border: 1px solid #e2e8f0;">Background</div>
+          <div class="color-label">#f8fafc</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-box" style="background: #0f172a; color: white;">Text</div>
+          <div class="color-label">#0f172a</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-box" style="background: #e2e8f0;">Border</div>
+          <div class="color-label">#e2e8f0</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-box" style="background: #f97316;">Alert Orange</div>
+          <div class="color-label">#f97316</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-box" style="background: #dc2626;">Alert Red</div>
+          <div class="color-label">#dc2626</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-box" style="background: #f59e0b;">Alert Yellow</div>
+          <div class="color-label">#f59e0b</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typography -->
+    <div class="component-group" id="typography">
+      <h2>✍️ Typography</h2>
+      <div style="background: #f1f5f9; padding: 2rem; border-radius: 12px;">
+        <h1 style="margin-bottom: 1rem;">Heading 1 (2rem, Poppins 700)</h1>
+        <h2 style="margin-bottom: 1rem;">Heading 2 (1.5rem, Poppins 700)</h2>
+        <h3 style="margin-bottom: 1rem;">Heading 3 (1.1rem, Poppins 600)</h3>
+        <p style="margin-bottom: 1rem; font-size: 1rem;">
+          Body Text (1rem, Poppins 400): Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        </p>
+        <p class="text-sm">Small Text (0.85rem, Poppins 400): Supporting text and descriptions</p>
+        <p><code class="font-mono">Monospace: #10b981, font-size: 0.95rem</code></p>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="component-group" id="buttons">
+      <h2>🔘 Buttons & States</h2>
+      <div class="component-showcase">
+        <button class="btn btn-primary">
+          <i class="fas fa-check"></i> Primary Action
+        </button>
+        <button class="btn btn-secondary">
+          <i class="fas fa-arrow-right"></i> Secondary Action
+        </button>
+        <button class="btn btn-danger">
+          <i class="fas fa-trash"></i> Danger Action
+        </button>
+        <button class="btn btn-disabled" disabled>
+          <i class="fas fa-lock"></i> Disabled
+        </button>
+        <button class="btn btn-primary btn-loading">
+          <span class="spinner"></span> Loading
+        </button>
+        <button class="btn btn-primary" style="width: 200px;">
+          Mobile Full Width
+        </button>
+      </div>
+    </div>
+
+    <!-- Input Fields -->
+    <div class="component-group" id="inputs">
+      <h2>📝 Input Fields</h2>
+      <div style="max-width: 400px;">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="user@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" placeholder="••••••••">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location / Description</label>
+          <textarea class="form-input" placeholder="Enter location details..." style="min-height: 120px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Select Waste Type</label>
+          <select class="form-input">
+            <option>-- Select Type --</option>
+            <option>Organic Waste</option>
+            <option>Recyclables</option>
+            <option>Hazardous</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bin ID (Disabled)</label>
+          <input type="text" class="form-input" placeholder="BIN-001" disabled>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Chips & Badges -->
+    <div class="component-group">
+      <h2>🏷️ Status Chips & Badges</h2>
+      <div class="component-showcase">
+        <span class="chip chip-success"><i class="fas fa-check-circle"></i> Resolved</span>
+        <span class="chip chip-pending"><i class="fas fa-clock"></i> Pending</span>
+        <span class="chip chip-warning"><i class="fas fa-exclamation-circle"></i> In Progress</span>
+        <span class="chip chip-error"><i class="fas fa-times-circle"></i> Failed</span>
+        <span class="badge">New Report</span>
+        <span class="badge" style="background: #fef3c7; color: #b45309;">Urgent</span>
+        <span class="badge" style="background: #dbeafe; color: #0c4a6e;">Active</span>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="component-group">
+      <h2>📊 KPI Cards</h2>
+      <div class="grid">
+        <div class="kpi-card">
+          <div class="kpi-value">847</div>
+          <div class="kpi-label">Total Waste Bins</div>
+          <div class="kpi-change">↑ 12 this week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">156</div>
+          <div class="kpi-label">Overflow (>80%)</div>
+          <div class="kpi-change">↓ -8 optimized</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">23</div>
+          <div class="kpi-label">Pending Complaints</div>
+          <div class="kpi-change">⚠️ Needs attention</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">28</div>
+          <div class="kpi-label">Active Drivers</div>
+          <div class="kpi-change">✓ All online</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task Cards -->
+    <div class="component-group">
+      <h2>📋 Task Cards (Driver)</h2>
+      <div style="max-width: 400px;">
+        <div class="task-card">
+          <div class="task-header">
+            <div>
+              <div class="task-id">🗑️ Bin #2847</div>
+              <div class="task-detail">Downtown Market</div>
+            </div>
+            <span class="chip chip-success">85%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+            <span style="font-size: 0.85rem; color: #64748b;">📍 2.3 km away</span>
+            <button class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Navigate</button>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-header">
+            <div>
+              <div class="task-id">🗑️ Bin #2845</div>
+              <div class="task-detail">Park Avenue</div>
+            </div>
+            <span class="chip chip-warning">65%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+            <span style="font-size: 0.85rem; color: #64748b;">📍 1.1 km away</span>
+            <button class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Navigate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="component-group">
+      <h2>📊 Data Table (Admin)</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Report ID</th>
+            <th>Issue Type</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#4521</td>
+            <td>Bin Overflow</td>
+            <td>Downtown Market</td>
+            <td><span class="chip chip-error">Open</span></td>
+            <td><button class="btn btn-primary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Resolve</button></td>
+          </tr>
+          <tr>
+            <td>#4520</td>
+            <td>Damaged Bin</td>
+            <td>Park Avenue</td>
+            <td><span class="chip chip-warning">In Progress</span></td>
+            <td><button class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Update</button></td>
+          </tr>
+          <tr>
+            <td>#4519</td>
+            <td>Foul Smell</td>
+            <td>School Road</td>
+            <td><span class="chip chip-success">Resolved</span></td>
+            <td><button class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">View</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Alerts -->
+    <div class="component-group">
+      <h2>⚠️ Alerts & Messages</h2>
+      <div class="alert alert-error">
+        <span class="alert-icon"><i class="fas fa-exclamation-circle"></i></span>
+        <div>
+          <strong>Error:</strong> Failed to update bin status. Please try again later.
+        </div>
+      </div>
+      <div class="alert alert-warning">
+        <span class="alert-icon"><i class="fas fa-exclamation-triangle"></i></span>
+        <div>
+          <strong>Warning:</strong> Location permission required to access route map.
+        </div>
+      </div>
+      <div class="alert alert-success">
+        <span class="alert-icon"><i class="fas fa-check-circle"></i></span>
+        <div>
+          <strong>Success:</strong> Waste collection completed successfully!
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty States -->
+    <div class="component-group" id="states">
+      <h2>🚫 Empty States</h2>
+      <div class="grid">
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">No Reports Yet</div>
+          <div class="empty-desc">You haven't filed any waste reports yet</div>
+          <button class="btn btn-primary">Report Waste</button>
+        </div>
+        <div class="empty-state">
+          <div class="empty-icon">🗺️</div>
+          <div class="empty-title">No Active Route</div>
+          <div class="empty-desc">Awaiting route assignment from admin</div>
+          <button class="btn btn-secondary">Refresh</button>
+        </div>
+        <div class="empty-state">
+          <div class="empty-icon">🎁</div>
+          <div class="empty-title">No Rewards Yet</div>
+          <div class="empty-desc">Start collecting points to unlock rewards</div>
+          <button class="btn btn-primary">Learn More</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Skeletons -->
+    <div class="component-group">
+      <h2>⏳ Loading Skeletons</h2>
+      <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--border);">
+        <div style="display: flex; gap: 1rem;">
+          <div class="skeleton skeleton-avatar"></div>
+          <div style="flex: 1;">
+            <div class="skeleton skeleton-text" style="width: 80%;"></div>
+            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+            <div class="skeleton skeleton-text" style="width: 40%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Component Specs -->
+    <div class="component-group">
+      <h2>📐 Component Specifications</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Header / Top Bar</h3>
+          <p>Fixed sticky position, white background with subtle border. Contains app badge, portal title, and profile section.</p>
+          <p class="text-sm">Height: 64px | Shadow: var(--shadow)</p>
+        </div>
+        <div class="card">
+          <h3>Sidebar (Admin)</h3>
+          <p>Collapsible left navigation panel. Desktop only. Smooth collapse animation.</p>
+          <p class="text-sm">Width: 260px (expanded), 70px (collapsed) | Radius: 12px</p>
+        </div>
+        <div class="card">
+          <h3>Bottom Navigation (Mobile)</h3>
+          <p>4-slot mobile bottom nav for Driver & Citizen portals. Sticky to bottom.</p>
+          <p class="text-sm">Height: 60px | Icons + labels | Active indicator</p>
+        </div>
+        <div class="card">
+          <h3>Card Container</h3>
+          <p>Standard reusable card. Used for every content block.</p>
+          <p class="text-sm">Radius: 16px | Border: 1px solid var(--border) | Shadow: var(--shadow)</p>
+        </div>
+        <div class="card">
+          <h3>KPI Card</h3>
+          <p>Data display card with gradient background and trend indicator.</p>
+          <p class="text-sm">Background: gradient #ecfdf5 to #f0fdf4 | Radius: 16px</p>
+        </div>
+        <div class="card">
+          <h3>Modal / Bottom Sheet</h3>
+          <p>Mobile: Bottom sheet overlay. Desktop: Centered modal with backdrop.</p>
+          <p class="text-sm">Backdrop: rgba(0,0,0,0.5) | Radius: 16px top (mobile)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Responsive Breakpoints -->
+    <div class="component-group">
+      <h2>📱 Responsive Breakpoints</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Mobile (360px)</h3>
+          <p>Single column layout. Bottom navigation. Full-width cards.</p>
+          <p class="text-sm">Driver & Citizen optimized for this viewport</p>
+        </div>
+        <div class="card">
+          <h3>Tablet (768px)</h3>
+          <p>2-column grid layouts. Sidebar collapses or hides. Touch-friendly controls.</p>
+          <p class="text-sm">Intermediate breakpoint with adjusted spacing</p>
+        </div>
+        <div class="card">
+          <h3>Desktop (1440px)</h3>
+          <p>Multi-column grids. Sidebar visible. Full feature set.</p>
+          <p class="text-sm">Admin portal optimized for desktop experience</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Important Notes -->
+    <div class="component-group">
+      <h2>⭐ Design System Notes</h2>
+      <ul style="line-height: 2; color: #64748b;">
+        <li>✓ All text has sufficient contrast for WCAG AA compliance</li>
+        <li>✓ Buttons have minimum 44px touch target on mobile</li>
+        <li>✓ Icons from Font Awesome 6.4.0 (400+ icons available)</li>
+        <li>✓ Spacing uses 0.5rem increments (8px base)</li>
+        <li>✓ All transitions use 0.3s ease timing</li>
+        <li>✓ Glassmorphism: backdrop-filter: blur(10px) + rgba backgrounds</li>
+        <li>✓ Cards use consistent 12-24px border radius</li>
+        <li>✓ Focus states visible for keyboard navigation</li>
+        <li>✓ Loading states use spinners + opacity reduction</li>
+        <li>✓ Error states highlighted with alert colors and icons</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Navigation active state
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

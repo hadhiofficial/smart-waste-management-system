@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Smart Waste Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(180deg, #064e3b 0%, #047857 100%);
+      color: white;
+      padding: 2rem 0;
+      position: fixed;
+      height: 100vh;
+      width: 260px;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .sidebar-brand {
+      padding: 0 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-logo {
+      font-size: 1.8rem;
+    }
+
+    .sidebar-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.75rem;
+      opacity: 0.7;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0 1rem;
+    }
+
+    .menu-item {
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .menu-item.active {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border-left: 3px solid white;
+      padding-left: calc(1rem - 3px);
+    }
+
+    .menu-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      grid-column: 2;
+      padding: 2rem;
+      padding-left: 2rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .search-box {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      width: 250px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .header-btn {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .header-btn:hover {
+      background: #f1f5f9;
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #dc2626;
+      color: white;
+      font-size: 0.7rem;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .kpi-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #10b981;
+    }
+
+    .kpi-change {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.85rem;
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .kpi-label {
+      color: #64748b;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-value {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Charts Section */
+    .charts-section {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .chart-title {
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-bottom: 1rem;
+    }
+
+    /* Tables */
+    .table-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .table-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .table-title {
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      background: #f8fafc;
+      padding: 0.9rem;
+      text-align: left;
+      font-weight: 600;
+      color: #64748b;
+      border-bottom: 2px solid #e2e8f0;
+      font-size: 0.85rem;
+    }
+
+    .table td {
+      padding: 1rem 0.9rem;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.9rem;
+    }
+
+    .table tr:hover {
+      background: #f8fafc;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Chips */
+    .chip {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .chip-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .chip-warning {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .chip-error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .chip-info {
+      background: #dbeafe;
+      color: #0c4a6e;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+    }
+
+    .btn-primary {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #059669;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #10b981;
+      border: 1px solid #10b981;
+    }
+
+    .btn-secondary:hover {
+      background: #ecfdf5;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .charts-section {
+        grid-template-columns: 1fr;
+      }
+
+      .table-section {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+      }
+
+      .main-content {
+        grid-column: 1;
+        padding: 1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-actions {
+        gap: 0.5rem;
+      }
+
+      .search-box {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">🌿</div>
+        <div>
+          <div class="sidebar-title">Clean Bin</div>
+          <div class="sidebar-subtitle">Admin Panel</div>
+        </div>
+      </div>
+
+      <div class="sidebar-menu">
+        <a href="admin-dashboard.html" class="menu-item active">
+          <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="admin-bins.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-trash"></i></span>
+          <span>Bins Management</span>
+        </a>
+        <a href="admin-map.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-map-location-dot"></i></span>
+          <span>Live Map</span>
+        </a>
+        <a href="admin-complaints.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+          <span>Complaints</span>
+        </a>
+        <a href="admin-drivers.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-truck"></i></span>
+          <span>Drivers</span>
+        </a>
+        <a href="admin-users.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-users"></i></span>
+          <span>Users</span>
+        </a>
+        <a href="admin-reports.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-chart-bar"></i></span>
+          <span>Reports</span>
+        </a>
+        <a href="admin-settings.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-cog"></i></span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-title">Dashboard</div>
+        <div class="header-actions">
+          <input type="text" class="search-box" placeholder="Search by bin ID, area, or driver...">
+          <button class="header-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">8</span>
+          </button>
+          <button class="header-btn">
+            <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon"><i class="fas fa-trash"></i></div>
+            <div class="kpi-change"><i class="fas fa-arrow-up"></i> +12 this week</div>
+          </div>
+          <div class="kpi-label">Total Waste Bins</div>
+          <div class="kpi-value">847</div>
+          <div style="font-size: 0.85rem; color: #94a3b8;">Active in 12 areas</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon" style="background: linear-gradient(135deg, #fee2e2, #fca5a5); color: #dc2626;">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="kpi-change" style="color: #dc2626;"><i class="fas fa-arrow-up"></i> +5 today</div>
+          </div>
+          <div class="kpi-label">Overflow (>80%)</div>
+          <div class="kpi-value">156</div>
+          <div style="font-size: 0.85rem; color: #94a3b8;">⚠️ Needs attention</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon" style="background: linear-gradient(135deg, #dbeafe, #7dd3fc); color: #0369a1;">
+              <i class="fas fa-file-circle-check"></i>
+            </div>
+            <div class="kpi-change" style="color: #0369a1;"><i class="fas fa-arrow-down"></i> -3 resolved</div>
+          </div>
+          <div class="kpi-label">Pending Complaints</div>
+          <div class="kpi-value">23</div>
+          <div style="font-size: 0.85rem; color: #94a3b8;">Avg response: 4.2h</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon" style="background: linear-gradient(135deg, #c7d2fe, #a5b4fc); color: #4c1d95;">
+              <i class="fas fa-truck"></i>
+            </div>
+            <div class="kpi-change" style="color: #10b981;"><i class="fas fa-check"></i> All online</div>
+          </div>
+          <div class="kpi-label">Active Drivers</div>
+          <div class="kpi-value">28</div>
+          <div style="font-size: 0.85rem; color: #94a3b8;">28/30 routes active</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-section">
+        <div class="chart-card">
+          <div class="chart-title">
+            <i class="fas fa-bar-chart"></i> Waste Collected (Last 7 Days)
+          </div>
+          <div class="chart-container">
+            <canvas id="wasteChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">
+            <i class="fas fa-pie-chart"></i> Bin Status Distribution
+          </div>
+          <div class="chart-container">
+            <canvas id="binStatusChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tables -->
+      <div class="table-section">
+        <!-- Complaints Table -->
+        <div class="table-card">
+          <div class="table-title">
+            <span><i class="fas fa-exclamation-circle"></i> Recent Complaints</span>
+            <a href="#" style="color: #10b981; text-decoration: none; font-size: 0.85rem;">View All</a>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#4521</td>
+                <td>Bin Overflow</td>
+                <td><span class="chip chip-error">Open</span></td>
+                <td><button class="btn btn-primary">Resolve</button></td>
+              </tr>
+              <tr>
+                <td>#4520</td>
+                <td>Damaged Bin</td>
+                <td><span class="chip chip-warning">In Progress</span></td>
+                <td><button class="btn btn-secondary">Update</button></td>
+              </tr>
+              <tr>
+                <td>#4519</td>
+                <td>Foul Smell</td>
+                <td><span class="chip chip-success">Resolved</span></td>
+                <td><button class="btn btn-secondary">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Driver Routes Table -->
+        <div class="table-card">
+          <div class="table-title">
+            <span><i class="fas fa-route"></i> Active Routes</span>
+            <a href="#" style="color: #10b981; text-decoration: none; font-size: 0.85rem;">View All</a>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>Route</th>
+                <th>Progress</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ahmed R.</td>
+                <td>#47</td>
+                <td>
+                  <div style="width: 100px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                    <div style="width: 65%; height: 100%; background: #10b981; border-radius: 3px;"></div>
+                  </div>
+                </td>
+                <td><span class="chip chip-info">Active</span></td>
+              </tr>
+              <tr>
+                <td>Maria G.</td>
+                <td>#52</td>
+                <td>
+                  <div style="width: 100px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                    <div style="width: 82%; height: 100%; background: #10b981; border-radius: 3px;"></div>
+                  </div>
+                </td>
+                <td><span class="chip chip-info">Active</span></td>
+              </tr>
+              <tr>
+                <td>John S.</td>
+                <td>#41</td>
+                <td>
+                  <div style="width: 100px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                    <div style="width: 100%; height: 100%; background: #10b981; border-radius: 3px;"></div>
+                  </div>
+                </td>
+                <td><span class="chip chip-success">Complete</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Waste Collected Chart
+    const wasteCtx = document.getElementById('wasteChart').getContext('2d');
+    new Chart(wasteCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Waste (kg)',
+          data: [2400, 2100, 2800, 2200, 2900, 3100, 2600],
+          backgroundColor: 'rgba(16, 185, 129, 0.8)',
+          borderColor: '#10b981',
+          borderWidth: 2,
+          borderRadius: 8,
+          hoverBackgroundColor: 'rgba(5, 150, 105, 0.9)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 3500,
+            grid: {
+              drawBorder: false,
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+
+    // Bin Status Chart
+    const statusCtx = document.getElementById('binStatusChart').getContext('2d');
+    new Chart(statusCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Empty (0-30%)', 'Medium (30-70%)', 'Full (70-80%)', 'Overflow (>80%)'],
+        datasets: [{
+          data: [450, 250, 91, 56],
+          backgroundColor: [
+            '#10b981',
+            '#06b6d4',
+            '#f59e0b',
+            '#dc2626'
+          ],
+          borderColor: white,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: { size: 12, family: "'Poppins', sans-serif" },
+              padding: 15,
+              usePointStyle: true
+            }
+          }
+        }
+      }
+    });
+
+    // Menu click handlers
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

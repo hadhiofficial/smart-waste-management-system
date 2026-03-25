@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Green Points - CLEAN BIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/modern.css">
+  <style>
+    body { display: flex; background: linear-gradient(135deg, #f9fafb 0%, #ecfdf5 100%); min-height: 100vh; }
+    .sidebar { width: 260px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-right: 1px solid rgba(0, 0, 0, 0.05); padding: 1.5rem 0; height: 100vh; position: fixed; left: 0; overflow-y: auto; box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08); }
+    .sidebar-brand { padding: 0 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; color: var(--primary-green); text-decoration: none; }
+    .sidebar-brand i { font-size: 1.5rem; }
+    .sidebar-brand span { font-weight: 700; font-size: 1.1rem; }
+    .sidebar-menu { list-style: none; padding: 0; }
+    .sidebar-item { margin-bottom: 0.5rem; }
+    .sidebar-link { display: flex; align-items: center; gap: 1rem; padding: 0.875rem 1.5rem; color: var(--neutral-700); text-decoration: none; transition: all var(--transition-base); border-left: 3px solid transparent; }
+    .sidebar-link:hover, .sidebar-link.active { background: rgba(16, 185, 129, 0.08); color: var(--primary-green); border-left-color: var(--primary-green); }
+    .sidebar-link i { width: 20px; text-align: center; }
+    .main-content { margin-left: 260px; flex: 1; padding: 2rem; }
+    .header { margin-bottom: 2rem; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.3); }
+    .header h1 { margin: 0; font-size: 1.75rem; color: var(--primary-dark); }
+    .points-card { background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3); text-align: center; }
+    .points-total { font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .points-label { font-size: 1.1rem; opacity: 0.9; margin-bottom: 1rem; }
+    .rewards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .reward-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 1rem; padding: 1.5rem; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05); }
+    .reward-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .reward-name { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 0.5rem; }
+    .reward-points { font-size: 0.9rem; color: var(--neutral-600); margin-bottom: 1rem; }
+    .reward-desc { font-size: 0.85rem; color: var(--neutral-600); margin-bottom: 1rem; }
+    .btn-redeem { width: 100%; padding: 0.75rem; background: var(--primary-green); color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; }
+    .btn-redeem:hover { background: #059669; }
+    .activity-list { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border-radius: 1rem; padding: 1.5rem; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05); }
+    .activity-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--neutral-200); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon { width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-green); font-size: 1.2rem; }
+    .activity-text { flex: 1; }
+    .activity-title { font-weight: 600; color: var(--primary-dark); }
+    .activity-time { font-size: 0.85rem; color: var(--neutral-600); }
+    .activity-points { font-weight: 700; color: var(--primary-green); }
+    @media (max-width: 1024px) {
+      .sidebar { width: 70px; }
+      .main-content { margin-left: 70px; }
+      .sidebar-link span { display: none; }
+      .sidebar-brand span { display: none; }
+      .rewards-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <a href="dashboard-user.html" class="sidebar-brand"><i class="fas fa-leaf"></i><span>CLEAN BIN</span></a>
+    <ul class="sidebar-menu">
+      <li class="sidebar-item"><a href="dashboard-user.html" class="sidebar-link"><i class="fas fa-chart-area"></i> <span>Dashboard</span></a></li>
+      <li class="sidebar-item"><a href="nearby-bins.html" class="sidebar-link"><i class="fas fa-map"></i> <span>Nearby Bins</span></a></li>
+      <li class="sidebar-item"><a href="report-issue.html" class="sidebar-link"><i class="fas fa-exclamation-circle"></i> <span>Report Issue</span></a></li>
+      <li class="sidebar-item"><a href="my-reports.html" class="sidebar-link"><i class="fas fa-list"></i> <span>My Reports</span></a></li>
+      <li class="sidebar-item"><a href="schedule.html" class="sidebar-link"><i class="fas fa-calendar"></i> <span>Schedule</span></a></li>
+      <li class="sidebar-item"><a href="green-points.html" class="sidebar-link active"><i class="fas fa-leaf"></i> <span>Green Points</span></a></li>
+      <li class="sidebar-item"><a href="settings.html" class="sidebar-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+      <li class="sidebar-item"><a href="login.html" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <div class="header">
+      <h1>🌿 Green Points</h1>
+      <p>Earn points by contributing to environmental sustainability</p>
+    </div>
+
+    <div class="points-card">
+      <div class="points-total">450</div>
+      <div class="points-label">Available Green Points</div>
+      <small>Exchange points for rewards below</small>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <h2 style="color: var(--primary-dark); margin-bottom: 1rem;">🎁 Available Rewards</h2>
+      <div class="rewards-grid">
+        <div class="reward-card">
+          <div class="reward-icon">🎫</div>
+          <div class="reward-name">Discount Voucher</div>
+          <div class="reward-points">100 points</div>
+          <div class="reward-desc">Get 10% off on eco-friendly products</div>
+          <button class="btn-redeem">Redeem</button>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-icon">🌳</div>
+          <div class="reward-name">Plant A Tree</div>
+          <div class="reward-points">200 points</div>
+          <div class="reward-desc">We'll plant a tree in your name</div>
+          <button class="btn-redeem">Redeem</button>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-icon">📚</div>
+          <div class="reward-name">Eco Guide Book</div>
+          <div class="reward-points">150 points</div>
+          <div class="reward-desc">Get our comprehensive sustainability guide</div>
+          <button class="btn-redeem">Redeem</button>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-icon">🎒</div>
+          <div class="reward-name">Eco-Friendly Kit</div>
+          <div class="reward-points">300 points</div>
+          <div class="reward-desc">Complete sustainability starter pack</div>
+          <button class="btn-redeem">Redeem</button>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-icon">🏆</div>
+          <div class="reward-name">Community Badge</div>
+          <div class="reward-points">50 points</div>
+          <div class="reward-desc">Display your eco-warrior status</div>
+          <button class="btn-redeem">Redeem</button>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-icon">💳</div>
+          <div class="reward-name">Bonus Coupon</div>
+          <div class="reward-points">250 points</div>
+          <div class="reward-desc">$25 discount on next purchase</div>
+          <button class="btn-redeem">Redeem</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 style="color: var(--primary-dark); margin-bottom: 1rem;">📊 Recent Activities</h2>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="activity-icon">✅</div>
+          <div class="activity-text">
+            <div class="activity-title">Issue Resolved</div>
+            <div class="activity-time">2 hours ago</div>
+          </div>
+          <div class="activity-points">+10</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">🗑️</div>
+          <div class="activity-text">
+            <div class="activity-title">Report Submitted</div>
+            <div class="activity-time">Yesterday</div>
+          </div>
+          <div class="activity-points">+5</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">♻️</div>
+          <div class="activity-text">
+            <div class="activity-title">Participated in Cleanup Drive</div>
+            <div class="activity-time">3 days ago</div>
+          </div>
+          <div class="activity-points">+50</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

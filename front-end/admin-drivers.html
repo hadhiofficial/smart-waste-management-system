@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drivers - Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      padding: 2rem 1rem;
+      color: white;
+      position: fixed;
+      height: 100vh;
+      width: 260px;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .sidebar-logo {
+      font-size: 2rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .menu-item {
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .menu-item.active {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border-left: 3px solid white;
+      padding-left: calc(1rem - 3px);
+    }
+
+    .menu-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .main-content {
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 2rem;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .btn-add {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-add:hover {
+      background: #059669;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #10b981;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 2rem;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .filter-select {
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.9rem;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    .driver-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .driver-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .status-offline {
+      background: #e5e7eb;
+      color: #6b7280;
+    }
+
+    .status-break {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .action-btn {
+      padding: 0.5rem 0.75rem;
+      margin-right: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-view {
+      background: #06b6d4;
+      color: white;
+    }
+
+    .btn-view:hover {
+      background: #0891b2;
+    }
+
+    .btn-contact {
+      background: #f97316;
+      color: white;
+    }
+
+    .btn-contact:hover {
+      background: #ea580c;
+    }
+
+    .btn-edit {
+      background: #8b5cf6;
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background: #7c3aed;
+    }
+
+    @media (max-width: 768px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        z-index: 1000;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .search-bar {
+        flex-direction: column;
+      }
+
+      table {
+        font-size: 0.75rem;
+      }
+
+      th, td {
+        padding: 0.5rem;
+      }
+
+      .driver-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+      }
+
+      .action-btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">🌿</div>
+        <div>
+          <div class="sidebar-title">Clean Bin</div>
+          <div class="sidebar-subtitle">Admin Panel</div>
+        </div>
+      </div>
+
+      <div class="sidebar-menu">
+        <a href="admin-dashboard.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="admin-bins.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-trash"></i></span>
+          <span>Bins Management</span>
+        </a>
+        <a href="admin-map.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-map-location-dot"></i></span>
+          <span>Live Map</span>
+        </a>
+        <a href="admin-complaints.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+          <span>Complaints</span>
+        </a>
+        <a href="admin-drivers.html" class="menu-item active">
+          <span class="menu-icon"><i class="fas fa-truck"></i></span>
+          <span>Drivers</span>
+        </a>
+        <a href="admin-users.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-users"></i></span>
+          <span>Users</span>
+        </a>
+        <a href="admin-reports.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-chart-bar"></i></span>
+          <span>Reports</span>
+        </a>
+        <a href="admin-settings.html" class="menu-item">
+          <span class="menu-icon"><i class="fas fa-cog"></i></span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <div class="header-title">Drivers Management</div>
+        <button class="btn-add">+ Add Driver</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">28</div>
+          <div class="stat-label">Total Drivers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">22</div>
+          <div class="stat-label">Active Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">4.8★</div>
+          <div class="stat-label">Avg Rating</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">2,847</div>
+          <div class="stat-label">Total Collections</div>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <div class="content-card">
+          <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search drivers...">
+            <select class="filter-select">
+              <option>All Status</option>
+              <option>Active</option>
+              <option>On Break</option>
+              <option>Offline</option>
+            </select>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Vehicle ID</th>
+                <th>Status</th>
+                <th>Collections Today</th>
+                <th>Rating</th>
+                <th>Hours</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="driver-info">
+                    <div class="driver-avatar">AR</div>
+                    <span>Ahmed Rahman</span>
+                  </div>
+                </td>
+                <td>VH-2847</td>
+                <td><span class="status-badge status-active">Active</span></td>
+                <td>12</td>
+                <td>⭐ 4.9</td>
+                <td>6.5 hrs</td>
+                <td>
+                  <button class="action-btn btn-view">View</button>
+                  <button class="action-btn btn-contact">Contact</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="driver-info">
+                    <div class="driver-avatar">MG</div>
+                    <span>Maria Garcia</span>
+                  </div>
+                </td>
+                <td>VH-2845</td>
+                <td><span class="status-badge status-active">Active</span></td>
+                <td>10</td>
+                <td>⭐ 4.7</td>
+                <td>5.2 hrs</td>
+                <td>
+                  <button class="action-btn btn-view">View</button>
+                  <button class="action-btn btn-contact">Contact</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="driver-info">
+                    <div class="driver-avatar">JP</div>
+                    <span>James Peterson</span>
+                  </div>
+                </td>
+                <td>VH-2843</td>
+                <td><span class="status-badge status-break">On Break</span></td>
+                <td>8</td>
+                <td>⭐ 4.5</td>
+                <td>4.8 hrs</td>
+                <td>
+                  <button class="action-btn btn-view">View</button>
+                  <button class="action-btn btn-contact">Contact</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="driver-info">
+                    <div class="driver-avatar">SK</div>
+                    <span>Sophia Kumar</span>
+                  </div>
+                </td>
+                <td>VH-2841</td>
+                <td><span class="status-badge status-active">Active</span></td>
+                <td>15</td>
+                <td>⭐ 4.8</td>
+                <td>7.1 hrs</td>
+                <td>
+                  <button class="action-btn btn-view">View</button>
+                  <button class="action-btn btn-contact">Contact</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="driver-info">
+                    <div class="driver-avatar">DM</div>
+                    <span>David Martinez</span>
+                  </div>
+                </td>
+                <td>VH-2851</td>
+                <td><span class="status-badge status-offline">Offline</span></td>
+                <td>6</td>
+                <td>⭐ 4.2</td>
+                <td>3.5 hrs</td>
+                <td>
+                  <button class="action-btn btn-view">View</button>
+                  <button class="action-btn btn-edit">Edit</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="driver-info">
+                    <div class="driver-avatar">LC</div>
+                    <span>Lisa Chen</span>
+                  </div>
+                </td>
+                <td>VH-2853</td>
+                <td><span class="status-badge status-active">Active</span></td>
+                <td>14</td>
+                <td>⭐ 4.6</td>
+                <td>6.8 hrs</td>
+                <td>
+                  <button class="action-btn btn-view">View</button>
+                  <button class="action-btn btn-contact">Contact</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
